@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LATD-AI Log Analyzer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #343a40;
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #007bff;
+        }
+        h2 {
+            color: #495057;
+            margin-top: 0;
+        }
+        .section {
+            background-color: white;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .info {
+            color: #0c5460;
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .normal {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .anomalous {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 4px 4px 0 0;
+            margin-right: 5px;
+        }
+        .tab.active {
+            background-color: white;
+            border-bottom: 1px solid white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .summary-box {
+            margin-top: 15px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+        .conclusion {
+            font-size: 18px;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .threat-level {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+            text-align: center;
+        }
+        .threat-low {
+            color: #28a745;
+        }
+        .threat-medium {
+            color: #ffc107;
+        }
+        .threat-high {
+            color: #dc3545;
+        }
+        .progress-container {
+            width: 100%;
+            height: 30px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            font-weight: bold;
+            transition: width 1s;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        table, th, td {
+            border: 1px solid #dee2e6;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+        tr.anomalous-row {
+            background-color: #f8d7da;
+        }
+        .sample-threats {
+            margin-top: 15px;
+        }
+        .threat-item {
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: #f8d7da;
+            border-radius: 4px;
+        }
+        .file-drop-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .file-drop-area:hover {
+            border-color: #999;
+        }
+        .file-drop-area.active {
+            border-color: #4CAF50;
+            background-color: #f0f9f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>LATD-AI Log Analyzer</h1>
+        
+        <div class="section">
+            <h2>1. Load Model</h2>
+            <div id="autoLoadInfo" class="result" style="margin-bottom: 15px;">
+                {% if model_loaded %}
+                <div class="success">
+                    <p>✅ Model automatically loaded from: <span id="currentModelPath">{{ model_path }}</span></p>
+                    <p>You can start using the model right away, or load a different model below.</p>
+                </div>
+                {% else %}
+                <div class="error">
+                    <p>⚠️ No model automatically loaded. Please provide a model path below.</p>
+                </div>
+                {% endif %}
+            </div>
+            <form id="modelForm">
+                <div class="form-group">
+                    <label for="model_path">Model Path:</label>
+                    <input type="text" id="model_path" name="model_path" required 
+                           placeholder="Enter the path to your trained model directory"
+                           value="{{ model_path }}">
+                </div>
+                <button type="submit">Load Model</button>
+            </form>
+            <div id="modelResult" class="result"></div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab" data-tab="single">Single Log Entry</div>
+            <div class="tab active" data-tab="batch">Log File Analysis</div>
+        </div>
+        
+        <div class="tab-content" id="single">
+            <div class="section">
+                <h2>2. Single Log Entry Prediction</h2>
+                <form id="singleLogForm">
+                    <p>Enter the log attributes below. For numeric fields, enter numbers; for categorical fields, enter the appropriate string values.</p>
+                    <div id="fieldsContainer">
+                        <!-- Base fields - add more fields as needed -->
+                        <div class="form-group">
+                            <label for="srcip">Source IP:</label>
+                            <input type="text" id="srcip" name="srcip" placeholder="e.g., 192.168.1.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="sport">Source Port:</label>
+                            <input type="number" id="sport" name="sport" placeholder="e.g., 80">
+                        </div>
+                        <div class="form-group">
+                            <label for="dstip">Destination IP:</label>
+                            <input type="text" id="dstip" name="dstip" placeholder="e.g., 10.0.0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="dsport">Destination Port:</label>
+                            <input type="number" id="dsport" name="dsport" placeholder="e.g., 443">
+                        </div>
+                        <div class="form-group">
+                            <label for="proto">Protocol:</label>
+                            <input type="text" id="proto" name="proto" placeholder="e.g., tcp">
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State:</label>
+                            <input type="text" id="state" name="state" placeholder="e.g., FIN, CON">
+                        </div>
+                        <div class="form-group">
+                            <label for="dur">Duration:</label>
+                            <input type="number" id="dur" name="dur" step="0.001" placeholder="e.g., 0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="sbytes">Source Bytes:</label>
+                            <input type="number" id="sbytes" name="sbytes" placeholder="e.g., 1024">
+                        </div>
+                        <div class="form-group">
+                            <label for="dbytes">Destination Bytes:</label>
+                            <input type="number" id="dbytes" name="dbytes" placeholder="e.g., 2048">
+                        </div>
+                    </div>
+                    <button type="button" id="addField">Add Custom Field</button>
+                    <button type="submit">Predict</button>
+                </form>
+                <div id="predictionResult" class="result"></div>
+            </div>
+        </div>
+        
+        <div class="tab-content active" id="batch">
+            <div class="section">
+                <h2>2. Log File Analysis</h2>
+                <form id="batchForm">
+                    <div class="file-drop-area" id="fileDropArea">
+                        <p>Drag and drop your log file here or click to select</p>
+                        <div class="form-group" style="display: none;">
+                            <input type="file" id="logFile" name="file" accept=".csv" required>
+                        </div>
+                    </div>
+                    <div id="selectedFileName" style="margin-bottom: 15px;"></div>
+                    {% if default_test_log %}
+                    <div class="info" style="margin-bottom: 15px; padding: 15px; border-radius: 6px;">
+                        <h4 style="margin-top: 0;">💡 Default Test Dataset Available</h4>
+                        <p>You can use a pre-configured test dataset to quickly try out the model's capabilities.</p>
+                        <p><strong>Test file:</strong> <span id="defaultTestLog" style="font-family: monospace;">{{ default_test_log }}</span></p>
+                        <button type="button" id="useDefaultBtn" style="margin-top: 10px; background-color: #28a745;">Use Default Test Dataset</button>
+                    </div>
+                    {% endif %}
+                    <button type="submit">Analyze Log File</button>
+                </form>
+                <div id="batchResult" class="result"></div>
+                <div id="analysisConclusion" style="display: none;" class="conclusion">
+                    <div class="summary-box">
+                        <h3>Analysis Conclusion</h3>
+                        <div id="threatLevel" class="threat-level"></div>
+                        <div class="progress-container">
+                            <div id="threatProgress" class="progress-bar"></div>
+                        </div>
+                        <p id="conclusionText"></p>
+                        <div id="sampleThreats" class="sample-threats"></div>
+                    </div>
+                </div>
+                <div id="detailedResults" style="display: none; margin-top: 20px;">
+                    <h3>Detailed Results</h3>
+                    <table id="resultsTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Source IP</th>
+                                <th>Dest IP</th>
+                                <th>Protocol</th>
+                                <th>Prediction</th>
+                                <th>Confidence</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modelForm = document.getElementById('modelForm');
+            const modelResult = document.getElementById('modelResult');
+            const singleLogForm = document.getElementById('singleLogForm');
+            const predictionResult = document.getElementById('predictionResult');
+            const batchForm = document.getElementById('batchForm');
+            const batchResult = document.getElementById('batchResult');
+            const fileDropArea = document.getElementById('fileDropArea');
+            const logFileInput = document.getElementById('logFile');
+            const selectedFileName = document.getElementById('selectedFileName');
+            const analysisConclusion = document.getElementById('analysisConclusion');
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            // Check if model is already loaded from server-side
+            const autoLoadInfo = document.getElementById('autoLoadInfo');
+            const isModelLoaded = autoLoadInfo.querySelector('.success') !== null;
+            
+            // If model is already loaded, make UI immediately usable
+            if (isModelLoaded) {
+                // Ensure the result divs are visible initially
+                modelResult.style.display = 'block';
+                modelResult.classList.add('success');
+                modelResult.innerHTML = '<p>Model loaded successfully! You can now make predictions.</p>';
+            }
+            
+            // Load model form
+            modelForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(modelForm);
+                
+                fetch('/load_model', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    modelResult.style.display = 'block';
+                    if (data.status === 'success') {
+                        modelResult.classList.remove('error');
+                        modelResult.classList.add('success');
+                        document.getElementById('currentModelPath').textContent = formData.get('model_path');
+                        document.getElementById('autoLoadInfo').querySelector('div').className = 'success';
+                        document.getElementById('autoLoadInfo').querySelector('div').innerHTML = 
+                            `<p>✅ Model loaded from: <span id="currentModelPath">${formData.get('model_path')}</span></p>
+                             <p>You can start using the model right away, or load a different model below.</p>`;
+                    } else {
+                        modelResult.classList.remove('success');
+                        modelResult.classList.add('error');
+                        document.getElementById('autoLoadInfo').querySelector('div').className = 'error';
+                        document.getElementById('autoLoadInfo').querySelector('div').innerHTML = 
+                            `<p>⚠️ Failed to load model. Please check the path and try again.</p>`;
+                    }
+                    modelResult.innerHTML = `<p>${data.message}</p>`;
+                })
+                .catch(error => {
+                    modelResult.style.display = 'block';
+                    modelResult.classList.remove('success');
+                    modelResult.classList.add('error');
+                    modelResult.innerHTML = `<p>Error: ${error.message}</p>`;
+                });
+            });
+            
+            // Single log form submission
+            singleLogForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const formDataObj = {};
+                
+                // Convert form data to object
+                for (const [key, value] of formData.entries()) {
+                    if (value.trim() !== "") {
+                        // Convert numeric values
+                        if (!isNaN(value) && value !== "") {
+                            formDataObj[key] = parseFloat(value);
+                        } else {
+                            formDataObj[key] = value;
+                        }
+                    }
+                }
+                
+                // Send prediction request
+                try {
+                    const response = await fetch('/predict', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formDataObj)
+                    });
+                    const data = await response.json();
+                    
+                    if (data.status === 'success') {
+                        displayPredictionResult(data.result, predictionResult);
+                    } else {
+                        predictionResult.innerHTML = `<div class="error"><p>${data.message}</p></div>`;
+                        predictionResult.style.display = 'block';
+                    }
+                } catch (error) {
+                    predictionResult.innerHTML = `<div class="error"><p>Error: ${error.message}</p></div>`;
+                    predictionResult.style.display = 'block';
+                }
+            });
+            
+            // Function to display prediction result
+            function displayPredictionResult(result, container) {
+                const isPredictionAnomaly = result.prediction === 'Anomalous';
+                const predictionClass = isPredictionAnomaly ? 'anomalous' : 'normal';
+                const confidence = (result.confidence * 100).toFixed(2);
+                
+                let html = `
+                    <div class="${predictionClass}">
+                        <h3>Prediction: ${result.prediction}</h3>
+                        <p>Confidence: ${confidence}%</p>
+                `;
+                
+                if (isPredictionAnomaly && result.analysis) {
+                    html += `
+                        <div class="analysis-details">
+                            <h4>Risk Level: ${result.analysis.risk_level}</h4>
+                            <p>${result.analysis.interpretation}</p>
+                    `;
+                    
+                    if (result.analysis.potential_attack_types && result.analysis.potential_attack_types.length > 0) {
+                        html += '<h4>Potential Attack Types:</h4><ul>';
+                        result.analysis.potential_attack_types.forEach(attack => {
+                            html += `<li><strong>${attack.type}</strong>: ${attack.description}</li>`;
+                        });
+                        html += '</ul>';
+                    }
+                    
+                    if (result.analysis.recommendations && result.analysis.recommendations.length > 0) {
+                        html += '<h4>Recommendations:</h4><ul>';
+                        result.analysis.recommendations.forEach(rec => {
+                            html += `<li>${rec}</li>`;
+                        });
+                        html += '</ul>';
+                    }
+                    
+                    html += '</div>';
+                }
+                
+                html += '</div>';
+                container.innerHTML = html;
+                container.style.display = 'block';
+            }
+            
+            // File drag and drop functionality
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                fileDropArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                fileDropArea.addEventListener(eventName, () => {
+                    fileDropArea.classList.add('active');
+                });
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                fileDropArea.addEventListener(eventName, () => {
+                    fileDropArea.classList.remove('active');
+                });
+            });
+            
+            fileDropArea.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length > 0) {
+                    logFileInput.files = files;
+                    updateFileName(files[0].name);
+                }
+            });
+            
+            fileDropArea.addEventListener('click', () => {
+                logFileInput.click();
+            });
+            
+            logFileInput.addEventListener('change', () => {
+                if (logFileInput.files.length > 0) {
+                    updateFileName(logFileInput.files[0].name);
+                }
+            });
+            
+            function updateFileName(name) {
+                selectedFileName.textContent = `Selected file: ${name}`;
+            }
+            
+            // Batch processing form submission
+            batchForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                
+                if (!logFileInput.files.length) {
+                    batchResult.innerHTML = '<div class="error"><p>Please select a file to upload.</p></div>';
+                    batchResult.style.display = 'block';
+                    return;
+                }
+                
+                batchResult.innerHTML = '<div class="info"><p>Processing file... Please wait.</p></div>';
+                batchResult.style.display = 'block';
+                analysisConclusion.style.display = 'none';
+                
+                try {
+                    const response = await fetch('/batch_predict', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await response.json();
+                    
+                    if (data.status === 'success') {
+                        displayBatchResult(data, batchResult);
+                    } else {
+                        batchResult.innerHTML = `<div class="error"><p>${data.message}</p></div>`;
+                    }
+                } catch (error) {
+                    batchResult.innerHTML = `<div class="error"><p>Error: ${error.message}</p></div>`;
+                }
+            });
+            
+            // Function to display batch prediction results
+            function displayBatchResult(data, container) {
+                const results = data.results;
+                const summary = data.summary;
+                
+                let html = `
+                    <div class="batch-summary">
+                        <h3>Batch Analysis Complete</h3>
+                        <p>${data.message}</p>
+                    </div>
+                `;
+                
+                if (results.length > 0) {
+                    const limitedResults = results.slice(0, 100); // Limit to first 100 for performance
+                    
+                    html += `
+                        <h4>Sample Results (${limitedResults.length} of ${results.length}):</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Prediction</th>
+                                    <th>Confidence</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    
+                    limitedResults.forEach((result, index) => {
+                        const rowClass = result.prediction === 'Anomalous' ? 'anomalous-row' : '';
+                        html += `
+                            <tr class="${rowClass}">
+                                <td>${index + 1}</td>
+                                <td>${result.prediction}</td>
+                                <td>${(result.confidence * 100).toFixed(2)}%</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    html += '</tbody></table>';
+                    
+                    // Display conclusion
+                    if (summary) {
+                        // Set threat level color
+                        let threatColor = '';
+                        switch(summary.threat_level) {
+                            case 'Critical': threatColor = '#dc3545'; break;
+                            case 'High': threatColor = '#fd7e14'; break;
+                            case 'Medium': threatColor = '#ffc107'; break;
+                            case 'Low': threatColor = '#28a745'; break;
+                            default: threatColor = '#28a745';
+                        }
+                        
+                        const threatProgress = document.getElementById('threatProgress');
+                        threatProgress.style.width = `${summary.anomaly_percentage}%`;
+                        threatProgress.style.backgroundColor = threatColor;
+                        threatProgress.textContent = `${summary.anomaly_percentage.toFixed(1)}%`;
+                        
+                        const threatLevel = document.getElementById('threatLevel');
+                        threatLevel.textContent = `Threat Level: ${summary.threat_level}`;
+                        threatLevel.className = `threat-level threat-${summary.threat_level.toLowerCase()}`;
+                        
+                        const conclusionText = document.getElementById('conclusionText');
+                        conclusionText.textContent = summary.conclusion;
+                        
+                        // Display recommendations
+                        const sampleThreats = document.getElementById('sampleThreats');
+                        sampleThreats.innerHTML = '';
+                        
+                        if (summary.recommendations && summary.recommendations.length > 0) {
+                            let recHtml = '<h4>Recommendations:</h4><ul>';
+                            summary.recommendations.forEach(rec => {
+                                recHtml += `<li>${rec}</li>`;
+                            });
+                            recHtml += '</ul>';
+                            sampleThreats.innerHTML = recHtml;
+                        }
+                        
+                        analysisConclusion.style.display = 'block';
+                    }
+                }
+                
+                container.innerHTML = html;
+            }
+            
+            // Add new field button
+            document.getElementById('addField').addEventListener('click', () => {
+                const container = document.getElementById('fieldsContainer');
+                
+                // Create field name input
+                const nameLabel = document.createElement('label');
+                nameLabel.textContent = 'Field Name:';
+                
+                const nameInput = document.createElement('input');
+                nameInput.type = 'text';
+                nameInput.placeholder = 'e.g., custom_field';
+                
+                // Create field value input
+                const valueLabel = document.createElement('label');
+                valueLabel.textContent = 'Field Value:';
+                
+                const valueInput = document.createElement('input');
+                valueInput.type = 'text';
+                valueInput.placeholder = 'Value';
+                
+                // Set attributes for the custom field
+                nameInput.addEventListener('input', (e) => {
+                    const fieldName = e.target.value;
+                    if (fieldName) {
+                        valueInput.name = fieldName;
+                        valueInput.id = fieldName;
+                    }
+                });
+                
+                // Create container for the new field
+                const formGroup = document.createElement('div');
+                formGroup.className = 'form-group custom-field';
+                formGroup.appendChild(nameLabel);
+                formGroup.appendChild(nameInput);
+                formGroup.appendChild(valueLabel);
+                formGroup.appendChild(valueInput);
+                
+                container.appendChild(formGroup);
+            });
+            
+            // Tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Deactivate all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(t => t.classList.remove('active'));
+                    
+                    // Activate current tab
+                    tab.classList.add('active');
+                    document.getElementById(tab.getAttribute('data-tab')).classList.add('active');
+                });
+            });
+            
+            // Prevent defaults for drag events
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            // Set up default test dataset button if available
+            const useDefaultBtn = document.getElementById('useDefaultBtn');
+            if (useDefaultBtn) {
+                useDefaultBtn.addEventListener('click', async () => {
+                    const defaultTestLogUrl = document.getElementById('defaultTestLog').textContent;
+                    if (!defaultTestLogUrl) return;
+                    
+                    batchResult.innerHTML = '<div class="info"><p>Loading default test dataset... Please wait.</p></div>';
+                    batchResult.style.display = 'block';
+                    analysisConclusion.style.display = 'none';
+                    
+                    try {
+                        // Create a FormData object for the form submission
+                        const formData = new FormData();
+                        
+                        // Fetch the file from the server
+                        const response = await fetch(defaultTestLogUrl);
+                        if (!response.ok) {
+                            throw new Error(`Failed to fetch test data: ${response.statusText}`);
+                        }
+                        
+                        const blob = await response.blob();
+                        const fileName = defaultTestLogUrl.split('/').pop();
+                        const file = new File([blob], fileName, { type: 'text/csv' });
+                        
+                        // Add the file to the form
+                        formData.append('file', file);
+                        
+                        // Update the UI to show the selected file
+                        selectedFileName.textContent = `Selected file: ${fileName} (Default Test Dataset)`;
+                        
+                        // Send the form data to the batch predict endpoint
+                        const analysisResponse = await fetch('/batch_predict', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        const data = await analysisResponse.json();
+                        
+                        if (data.status === 'success') {
+                            displayBatchResult(data, batchResult);
+                        } else {
+                            batchResult.innerHTML = `<div class="error"><p>${data.message}</p></div>`;
+                        }
+                    } catch (error) {
+                        batchResult.innerHTML = `<div class="error"><p>Error: ${error.message}</p></div>`;
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html> 
