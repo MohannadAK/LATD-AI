@@ -4,230 +4,699 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LATD-AI Log Analyzer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
+        :root {
+            --primary-color: #4361ee;
+            --primary-hover: #3a56d4;
+            --secondary-color: #3f37c9;
+            --accent-color: #4cc9f0;
+            --success-color: #4ade80;
+            --warning-color: #fbbf24;
+            --error-color: #f87171;
+            --info-color: #60a5fa;
+            --bg-color: #f9fafb;
+            --card-bg: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --text-light: #6b7280;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius-sm: 0.25rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --transition: all 0.2s ease;
+            
+            /* Header gradient colors */
+            --header-gradient-start: #4361ee;
+            --header-gradient-end: #3f37c9;
+        }
+        
+        [data-theme="dark"] {
+            --primary-color: #6366f1;
+            --primary-hover: #818cf8;
+            --secondary-color: #4f46e5;
+            --accent-color: #38bdf8;
+            --success-color: #22c55e;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --info-color: #3b82f6;
+            --bg-color: #111827;
+            --card-bg: #1f2937;
+            --text-primary: #f9fafb;
+            --text-secondary: #e5e7eb;
+            --text-light: #9ca3af;
+            --border-color: #374151;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+            
+            /* Header gradient colors - darker in dark mode */
+            --header-gradient-start: #4f46e5;
+            --header-gradient-end: #4338ca;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background-color: #f8f9fa;
-            color: #212529;
         }
+
+        body {
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            padding-bottom: 40px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-        h1 {
-            color: #343a40;
+
+        header {
+            background: linear-gradient(135deg, var(--header-gradient-start), var(--header-gradient-end));
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 40px;
             text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #007bff;
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            position: relative;
         }
+        
+        /* Theme toggle styles */
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .theme-toggle i {
+            font-size: 1.2rem;
+        }
+        
+        /* Hide the sun icon when in light mode */
+        [data-theme="light"] .theme-toggle .fa-sun {
+            display: none;
+        }
+        
+        /* Hide the moon icon when in dark mode */
+        [data-theme="dark"] .theme-toggle .fa-moon {
+            display: none;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .subtitle {
+            opacity: 0.85;
+            font-weight: 400;
+            margin-bottom: 0;
+        }
+
         h2 {
-            color: #495057;
+            color: var(--text-primary);
             margin-top: 0;
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
         }
+
+        h2 i {
+            margin-right: 0.75rem;
+            color: var(--primary-color);
+        }
+
         .section {
-            background-color: white;
-            margin-bottom: 20px;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background-color: var(--card-bg);
+            margin-bottom: 30px;
+            padding: 25px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
         }
+
+        .section:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
+
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-secondary);
         }
+
         input[type="text"],
         input[type="number"],
         textarea {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
             box-sizing: border-box;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            background-color: var(--card-bg);
+            color: var(--text-primary);
         }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        /* Dark mode adjustments */
+        [data-theme="dark"] input[type="text"],
+        [data-theme="dark"] input[type="number"],
+        [data-theme="dark"] textarea {
+            background-color: rgba(31, 41, 55, 0.8);
+            border-color: var(--border-color);
+        }
+        
+        [data-theme="dark"] input[type="text"]:focus,
+        [data-theme="dark"] input[type="number"]:focus,
+        [data-theme="dark"] textarea:focus {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+        }
+
         button {
-            background-color: #007bff;
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 10px 15px;
+            padding: 12px 20px;
             cursor: pointer;
-            border-radius: 4px;
-            margin-top: 10px;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
+
+        button i {
+            margin-right: 8px;
+        }
+
         button:hover {
-            background-color: #0056b3;
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
         }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-alt {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-alt:hover {
+            background-color: rgba(99, 102, 241, 0.1);
+            color: var(--primary-hover);
+            border-color: var(--primary-color);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background-color: #3ecc71;
+        }
+
         .result {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 4px;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: var(--radius-md);
+            animation: fadeIn 0.3s ease-in-out;
         }
+
         .success {
-            color: #155724;
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-            padding: 10px;
-            border-radius: 4px;
+            color: #0f5132;
+            background-color: rgba(74, 222, 128, 0.2);
+            border: 1px solid rgba(74, 222, 128, 0.4);
+            border-left: 4px solid var(--success-color);
         }
+        
+        [data-theme="dark"] .success {
+            color: #4ade80;
+            background-color: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+        }
+
         .error {
-            color: #721c24;
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            padding: 10px;
-            border-radius: 4px;
+            color: #842029;
+            background-color: rgba(248, 113, 113, 0.2);
+            border: 1px solid rgba(248, 113, 113, 0.4);
+            border-left: 4px solid var(--error-color);
         }
+        
+        [data-theme="dark"] .error {
+            color: #f87171;
+            background-color: rgba(248, 113, 113, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+        }
+
         .warning {
-            color: #856404;
-            background-color: #fff3cd;
-            border: 1px solid #ffeeba;
-            padding: 10px;
-            border-radius: 4px;
+            color: #664d03;
+            background-color: rgba(251, 191, 36, 0.2);
+            border: 1px solid rgba(251, 191, 36, 0.4);
+            border-left: 4px solid var(--warning-color);
         }
+        
+        [data-theme="dark"] .warning {
+            color: #fbbf24;
+            background-color: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
         .info {
-            color: #0c5460;
-            background-color: #d1ecf1;
-            border: 1px solid #bee5eb;
-            padding: 10px;
-            border-radius: 4px;
+            color: #055160;
+            background-color: rgba(96, 165, 250, 0.2);
+            border: 1px solid rgba(96, 165, 250, 0.4);
+            border-left: 4px solid var(--info-color);
         }
+        
+        [data-theme="dark"] .info {
+            color: #60a5fa;
+            background-color: rgba(96, 165, 250, 0.1);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+        }
+
         .normal {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background-color: rgba(74, 222, 128, 0.2);
+            color: #0f5132;
+            border: 1px solid rgba(74, 222, 128, 0.4);
+            border-left: 4px solid var(--success-color);
         }
+        
+        [data-theme="dark"] .normal {
+            color: #4ade80;
+            background-color: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+        }
+
         .anomalous {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background-color: rgba(248, 113, 113, 0.2);
+            color: #842029;
+            border: 1px solid rgba(248, 113, 113, 0.4);
+            border-left: 4px solid var(--error-color);
         }
+        
+        [data-theme="dark"] .anomalous {
+            color: #fca5a5;
+            background-color: rgba(248, 113, 113, 0.2);
+            border: 1px solid rgba(248, 113, 113, 0.4);
+        }
+
         .tabs {
             display: flex;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            background-color: var(--card-bg);
+            padding: 5px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            z-index: 1;
+            border: 1px solid var(--border-color);
         }
+
         .tab {
-            padding: 10px 15px;
+            padding: 12px 20px;
             cursor: pointer;
-            background-color: #f1f1f1;
-            border: 1px solid #ddd;
-            border-radius: 4px 4px 0 0;
-            margin-right: 5px;
+            text-align: center;
+            font-weight: 500;
+            color: var(--text-secondary);
+            flex: 1;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
         }
+
+        .tab i {
+            margin-right: 8px;
+        }
+
+        .tab:hover {
+            color: var(--primary-color);
+        }
+
         .tab.active {
-            background-color: white;
-            border-bottom: 1px solid white;
+            color: var(--primary-color);
+            font-weight: 600;
+            background-color: rgba(67, 97, 238, 0.1);
         }
+        
+        [data-theme="dark"] .tab.active {
+            background-color: rgba(99, 102, 241, 0.2);
+        }
+
         .tab-content {
             display: none;
         }
+
         .tab-content.active {
             display: block;
+            animation: fadeIn 0.3s ease-in-out;
         }
+
         .summary-box {
-            margin-top: 15px;
-            padding: 20px;
-            border-radius: 8px;
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
+            margin-top: 25px;
+            padding: 25px;
+            border-radius: var(--radius-lg);
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
         }
+
         .conclusion {
-            font-size: 18px;
-            font-weight: bold;
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 20px;
-            text-align: center;
+            animation: slideUp 0.4s ease-out;
         }
+
         .threat-level {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 10px 0;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 15px 0;
             text-align: center;
         }
+
         .threat-low {
-            color: #28a745;
+            color: var(--success-color);
         }
+
         .threat-medium {
-            color: #ffc107;
+            color: var(--warning-color);
         }
+
         .threat-high {
-            color: #dc3545;
+            color: var(--error-color);
         }
+
         .progress-container {
             width: 100%;
-            height: 30px;
+            height: 10px;
             background-color: #e9ecef;
-            border-radius: 4px;
-            margin: 15px 0;
+            border-radius: 999px;
+            margin: 20px 0;
             overflow: hidden;
         }
+
         .progress-bar {
             height: 100%;
+            border-radius: 999px;
             text-align: center;
-            line-height: 30px;
             color: white;
             font-weight: bold;
-            transition: width 1s;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
+            margin-top: 20px;
+            background-color: var(--card-bg);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
         }
-        table, th, td {
-            border: 1px solid #dee2e6;
-        }
+
         th, td {
-            padding: 8px;
+            padding: 12px 15px;
             text-align: left;
+            border-bottom: 1px solid var(--border-color);
         }
+
         th {
-            background-color: #f8f9fa;
+            background-color: rgba(67, 97, 238, 0.05);
+            font-weight: 600;
+            color: var(--text-secondary);
         }
+        
+        [data-theme="dark"] th {
+            background-color: rgba(99, 102, 241, 0.1);
+        }
+
+        tr:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        [data-theme="dark"] tr:hover {
+            background-color: rgba(99, 102, 241, 0.1);
+        }
+
         tr.anomalous-row {
-            background-color: #f8d7da;
+            background-color: rgba(248, 113, 113, 0.1);
         }
+
+        tr.anomalous-row:hover {
+            background-color: rgba(248, 113, 113, 0.2);
+        }
+        
+        [data-theme="dark"] tr.anomalous-row {
+            background-color: rgba(248, 113, 113, 0.25);
+        }
+        
+        [data-theme="dark"] tr.anomalous-row:hover {
+            background-color: rgba(248, 113, 113, 0.35);
+        }
+
         .sample-threats {
-            margin-top: 15px;
+            margin-top: 20px;
         }
+
         .threat-item {
-            padding: 10px;
-            margin-bottom: 5px;
-            background-color: #f8d7da;
-            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: rgba(248, 113, 113, 0.1);
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+            border: 1px solid rgba(248, 113, 113, 0.2);
         }
+
+        [data-theme="dark"] .threat-item {
+            background-color: rgba(248, 113, 113, 0.2);
+            border: 1px solid rgba(248, 113, 113, 0.4);
+        }
+
+        .threat-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        [data-theme="dark"] .threat-item:hover {
+            background-color: rgba(248, 113, 113, 0.25);
+        }
+
         .file-drop-area {
-            border: 2px dashed #ccc;
-            border-radius: 8px;
-            padding: 25px;
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 40px 25px;
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 25px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: var(--transition);
+            background-color: rgba(255, 255, 255, 0.05);
         }
+
         .file-drop-area:hover {
-            border-color: #999;
+            border-color: var(--primary-color);
+            background-color: rgba(67, 97, 238, 0.05);
         }
+        
+        [data-theme="dark"] .file-drop-area:hover {
+            background-color: rgba(99, 102, 241, 0.1);
+        }
+
         .file-drop-area.active {
-            border-color: #4CAF50;
-            background-color: #f0f9f0;
+            border-color: var(--success-color);
+            background-color: rgba(74, 222, 128, 0.1);
+        }
+
+        .file-drop-area i {
+            font-size: 2.5rem;
+            color: var(--text-light);
+            margin-bottom: 15px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 5px;
+        }
+
+        .badge-normal {
+            background-color: rgba(74, 222, 128, 0.2);
+            color: #0f5132;
+        }
+
+        .badge-anomalous {
+            background-color: rgba(248, 113, 113, 0.2);
+            color: #842029;
+        }
+        
+        [data-theme="dark"] .badge-anomalous {
+            background-color: rgba(248, 113, 113, 0.3);
+            color: #fca5a5;
+        }
+
+        .graph-container {
+            width: 100%;
+            height: 200px;
+            margin: 25px 0;
+            border-radius: var(--radius-md);
+            background-color: rgba(255, 255, 255, 0.5);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .grid-item {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+        
+        [data-theme="dark"] .grid-item {
+            background-color: rgba(31, 41, 55, 0.6);
+        }
+
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .two-columns {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                margin-bottom: 10px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 15px auto;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
+    <header>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+        </button>
+        <div class="container">
+            <h1>LATD-AI Log Analyzer</h1>
+            <p class="subtitle">Advanced AI-powered network traffic analysis</p>
+        </div>
+    </header>
+
     <div class="container">
-        <h1>LATD-AI Log Analyzer</h1>
-        
         <div class="section">
-            <h2>1. Load Model</h2>
-            <div id="autoLoadInfo" class="result" style="margin-bottom: 15px;">
+            <h2><i class="fas fa-brain"></i>AI Model</h2>
+            <div id="autoLoadInfo" class="result" style="margin-bottom: 20px;">
                 {% if model_loaded %}
                 <div class="success">
                     <p>✅ Model automatically loaded from: <span id="currentModelPath">{{ model_path }}</span></p>
@@ -246,22 +715,22 @@
                            placeholder="Enter the path to your trained model directory"
                            value="{{ model_path }}">
                 </div>
-                <button type="submit">Load Model</button>
+                <button type="submit"><i class="fas fa-upload"></i>Load Model</button>
             </form>
             <div id="modelResult" class="result"></div>
         </div>
         
         <div class="tabs">
-            <div class="tab" data-tab="single">Single Log Entry</div>
-            <div class="tab active" data-tab="batch">Log File Analysis</div>
+            <div class="tab" data-tab="single"><i class="fas fa-file-alt"></i>Single Log Entry</div>
+            <div class="tab active" data-tab="batch"><i class="fas fa-file-csv"></i>Log File Analysis</div>
         </div>
         
         <div class="tab-content" id="single">
             <div class="section">
-                <h2>2. Single Log Entry Prediction</h2>
+                <h2><i class="fas fa-search"></i>Single Log Entry Analysis</h2>
                 <form id="singleLogForm">
                     <p>Enter the log attributes below. For numeric fields, enter numbers; for categorical fields, enter the appropriate string values.</p>
-                    <div id="fieldsContainer">
+                    <div id="fieldsContainer" class="grid-container">
                         <!-- Base fields - add more fields as needed -->
                         <div class="form-group">
                             <label for="srcip">Source IP:</label>
@@ -300,8 +769,10 @@
                             <input type="number" id="dbytes" name="dbytes" placeholder="e.g., 2048">
                         </div>
                     </div>
-                    <button type="button" id="addField">Add Custom Field</button>
-                    <button type="submit">Predict</button>
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button type="button" id="addField" class="btn-alt"><i class="fas fa-plus"></i>Add Custom Field</button>
+                        <button type="submit"><i class="fas fa-bolt"></i>Analyze</button>
+                    </div>
                 </form>
                 <div id="predictionResult" class="result"></div>
             </div>
@@ -309,9 +780,10 @@
         
         <div class="tab-content active" id="batch">
             <div class="section">
-                <h2>2. Log File Analysis</h2>
+                <h2><i class="fas fa-file-csv"></i>Log File Analysis</h2>
                 <form id="batchForm">
                     <div class="file-drop-area" id="fileDropArea">
+                        <i class="fas fa-cloud-upload-alt"></i>
                         <p>Drag and drop your log file here or click to select</p>
                         <div class="form-group" style="display: none;">
                             <input type="file" id="logFile" name="file" accept=".csv" required>
@@ -319,14 +791,18 @@
                     </div>
                     <div id="selectedFileName" style="margin-bottom: 15px;"></div>
                     {% if default_test_log %}
-                    <div class="info" style="margin-bottom: 15px; padding: 15px; border-radius: 6px;">
-                        <h4 style="margin-top: 0;">💡 Default Test Dataset Available</h4>
+                    <div class="info" style="margin-bottom: 20px; padding: 20px; border-radius: var(--radius-md);">
+                        <h4 style="margin-top: 0; display: flex; align-items: center;"><i class="fas fa-lightbulb" style="margin-right: 10px; color: var(--info-color);"></i>Default Test Dataset Available</h4>
                         <p>You can use a pre-configured test dataset to quickly try out the model's capabilities.</p>
                         <p><strong>Test file:</strong> <span id="defaultTestLog" style="font-family: monospace;">{{ default_test_log }}</span></p>
-                        <button type="button" id="useDefaultBtn" style="margin-top: 10px; background-color: #28a745;">Use Default Test Dataset</button>
+                        <button type="button" id="useDefaultBtn" class="btn-success" style="margin-top: 15px;"><i class="fas fa-check"></i>Use Default Test Dataset</button>
                     </div>
                     {% endif %}
-                    <button type="submit">Analyze Log File</button>
+                    <div class="loading" id="loadingIndicator">
+                        <div class="spinner"></div>
+                        <p>Analyzing log data...</p>
+                    </div>
+                    <button type="submit"><i class="fas fa-search"></i>Analyze Log File</button>
                 </form>
                 <div id="batchResult" class="result"></div>
                 <div id="analysisConclusion" style="display: none;" class="conclusion">
@@ -340,7 +816,7 @@
                         <div id="sampleThreats" class="sample-threats"></div>
                     </div>
                 </div>
-                <div id="detailedResults" style="display: none; margin-top: 20px;">
+                <div id="detailedResults" style="display: none; margin-top: 30px;">
                     <h3>Detailed Results</h3>
                     <table id="resultsTable">
                         <thead>
@@ -362,7 +838,33 @@
     </div>
 
     <script>
+        // Theme toggle functionality
         document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            
+            // Check for saved theme preference or use OS preference
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // Set initial theme based on preference
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+            
+            // Toggle theme when button is clicked
+            themeToggle.addEventListener('click', function() {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Add transition animation to body
+                document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
+            });
+            
             const modelForm = document.getElementById('modelForm');
             const modelResult = document.getElementById('modelResult');
             const singleLogForm = document.getElementById('singleLogForm');
@@ -375,6 +877,7 @@
             const analysisConclusion = document.getElementById('analysisConclusion');
             const tabs = document.querySelectorAll('.tab');
             const tabContents = document.querySelectorAll('.tab-content');
+            const loadingIndicator = document.getElementById('loadingIndicator');
             
             // Check if model is already loaded from server-side
             const autoLoadInfo = document.getElementById('autoLoadInfo');
@@ -388,11 +891,32 @@
                 modelResult.innerHTML = '<p>Model loaded successfully! You can now make predictions.</p>';
             }
             
-            // Load model form
+            // Tab switching with smooth transitions
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all tabs and contents
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to current tab and content
+                    this.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Load model form with improved feedback
             modelForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
                 const formData = new FormData(modelForm);
+                const submitBtn = modelForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                
+                // Show loading state
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+                submitBtn.disabled = true;
                 
                 fetch('/load_model', {
                     method: 'POST',
@@ -400,387 +924,562 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    modelResult.style.display = 'block';
-                    if (data.status === 'success') {
+                    modelResult.innerHTML = '';
+                    
+                    if(data.status === 'success') {
                         modelResult.classList.remove('error');
                         modelResult.classList.add('success');
-                        document.getElementById('currentModelPath').textContent = formData.get('model_path');
-                        document.getElementById('autoLoadInfo').querySelector('div').className = 'success';
-                        document.getElementById('autoLoadInfo').querySelector('div').innerHTML = 
-                            `<p>✅ Model loaded from: <span id="currentModelPath">${formData.get('model_path')}</span></p>
-                             <p>You can start using the model right away, or load a different model below.</p>`;
+                        
+                        // Update the current model path display
+                        const modelPathDisplay = document.getElementById('currentModelPath');
+                        if (modelPathDisplay) {
+                            modelPathDisplay.textContent = formData.get('model_path');
+                        }
+                        
+                        // Update auto load info
+                        autoLoadInfo.innerHTML = `
+                            <div class="success">
+                                <p>✅ Model loaded successfully from: <span id="currentModelPath">${formData.get('model_path')}</span></p>
+                                <p>You can start using the model right away, or load a different model below.</p>
+                            </div>
+                        `;
                     } else {
                         modelResult.classList.remove('success');
                         modelResult.classList.add('error');
-                        document.getElementById('autoLoadInfo').querySelector('div').className = 'error';
-                        document.getElementById('autoLoadInfo').querySelector('div').innerHTML = 
-                            `<p>⚠️ Failed to load model. Please check the path and try again.</p>`;
                     }
+                    
                     modelResult.innerHTML = `<p>${data.message}</p>`;
+                    modelResult.style.display = 'block';
+                    
+                    // Reset button
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
                 })
                 .catch(error => {
-                    modelResult.style.display = 'block';
                     modelResult.classList.remove('success');
                     modelResult.classList.add('error');
                     modelResult.innerHTML = `<p>Error: ${error.message}</p>`;
+                    modelResult.style.display = 'block';
+                    
+                    // Reset button
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
                 });
             });
             
-            // Single log form submission
-            singleLogForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                const formDataObj = {};
+            // Add custom field functionality
+            const addFieldBtn = document.getElementById('addField');
+            addFieldBtn.addEventListener('click', function() {
+                const fieldsContainer = document.getElementById('fieldsContainer');
                 
-                // Convert form data to object
-                for (const [key, value] of formData.entries()) {
-                    if (value.trim() !== "") {
-                        // Convert numeric values
-                        if (!isNaN(value) && value !== "") {
-                            formDataObj[key] = parseFloat(value);
-                        } else {
-                            formDataObj[key] = value;
+                // Create row for the new field
+                const fieldGroup = document.createElement('div');
+                fieldGroup.className = 'form-group';
+                
+                // Create a random ID for the new field
+                const randomId = 'field_' + Math.random().toString(36).substring(2, 9);
+                
+                // Create delete button
+                const deleteBtn = document.createElement('button');
+                deleteBtn.type = 'button';
+                deleteBtn.className = 'delete-field';
+                deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+                deleteBtn.style.position = 'absolute';
+                deleteBtn.style.right = '10px';
+                deleteBtn.style.top = '10px';
+                deleteBtn.style.background = 'transparent';
+                deleteBtn.style.color = 'var(--error-color)';
+                deleteBtn.style.border = 'none';
+                deleteBtn.style.padding = '5px';
+                deleteBtn.style.cursor = 'pointer';
+                
+                // Create label
+                const label = document.createElement('label');
+                label.setAttribute('for', randomId);
+                label.textContent = 'Field Name:';
+                
+                // Create field name input
+                const nameInput = document.createElement('input');
+                nameInput.setAttribute('type', 'text');
+                nameInput.setAttribute('id', randomId);
+                nameInput.setAttribute('name', randomId);
+                nameInput.setAttribute('placeholder', 'e.g., packets, bytes, service');
+                nameInput.style.marginBottom = '10px';
+                
+                // Create field value container for positioning
+                const valueContainer = document.createElement('div');
+                valueContainer.style.marginTop = '10px';
+                
+                // Create field value label
+                const valueLabel = document.createElement('label');
+                valueLabel.setAttribute('for', randomId + '_value');
+                valueLabel.textContent = 'Value:';
+                
+                // Create field value input
+                const valueInput = document.createElement('input');
+                valueInput.setAttribute('type', 'text');
+                valueInput.setAttribute('id', randomId + '_value');
+                valueInput.setAttribute('name', randomId + '_value');
+                valueInput.setAttribute('placeholder', 'Enter value');
+                
+                // Add elements to the container
+                valueContainer.appendChild(valueLabel);
+                valueContainer.appendChild(valueInput);
+                
+                fieldGroup.appendChild(deleteBtn);
+                fieldGroup.appendChild(label);
+                fieldGroup.appendChild(nameInput);
+                fieldGroup.appendChild(valueContainer);
+                
+                // Set position relative for absolute positioning of delete button
+                fieldGroup.style.position = 'relative';
+                fieldGroup.style.padding = '15px';
+                fieldGroup.style.backgroundColor = 'rgba(67, 97, 238, 0.03)';
+                fieldGroup.style.borderRadius = 'var(--radius-md)';
+                
+                // Add to container with animation
+                fieldGroup.style.opacity = '0';
+                fieldGroup.style.transform = 'translateY(10px)';
+                fieldsContainer.appendChild(fieldGroup);
+                
+                // Trigger animation
+                setTimeout(() => {
+                    fieldGroup.style.transition = 'all 0.3s ease-out';
+                    fieldGroup.style.opacity = '1';
+                    fieldGroup.style.transform = 'translateY(0)';
+                }, 10);
+                
+                // Add delete functionality
+                deleteBtn.addEventListener('click', function() {
+                    fieldGroup.style.opacity = '0';
+                    fieldGroup.style.transform = 'translateY(10px)';
+                    
+                    setTimeout(() => {
+                        fieldsContainer.removeChild(fieldGroup);
+                    }, 300);
+                });
+            });
+            
+            // Single log prediction form
+            singleLogForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = {};
+                const inputs = singleLogForm.querySelectorAll('input');
+                
+                // Collect form data
+                inputs.forEach(input => {
+                    // Skip value inputs from custom fields, they will be handled separately
+                    if (!input.id.includes('_value')) {
+                        const value = input.value.trim();
+                        if (value !== '') {
+                            // For custom fields, get both name and value
+                            if (input.id.startsWith('field_')) {
+                                const fieldName = input.value;
+                                const valueInput = document.getElementById(input.id + '_value');
+                                if (valueInput && valueInput.value.trim() !== '') {
+                                    formData[fieldName] = valueInput.value.trim();
+                                }
+                            } else {
+                                formData[input.name] = value;
+                            }
                         }
                     }
-                }
+                });
                 
-                // Send prediction request
-                try {
-                    const response = await fetch('/predict', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(formDataObj)
-                    });
-                    const data = await response.json();
+                const submitBtn = singleLogForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                
+                // Show loading state
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+                submitBtn.disabled = true;
+                
+                fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
                     
                     if (data.status === 'success') {
-                        displayPredictionResult(data.result, predictionResult);
+                        const result = data.result;
+                        predictionResult.innerHTML = '';
+                        
+                        // Add class based on prediction
+                        predictionResult.className = 'result';
+                        if (result.prediction === 'Normal') {
+                            predictionResult.classList.add('normal');
+                        } else {
+                            predictionResult.classList.add('anomalous');
+                        }
+                        
+                        // Create result content with improved design
+                        let resultContent = `<h3><i class="${result.prediction === 'Normal' ? 'fas fa-shield-alt' : 'fas fa-exclamation-triangle'}"></i> Prediction: ${result.prediction}</h3>`;
+                        resultContent += `<p>Confidence: <strong>${(result.confidence * 100).toFixed(2)}%</strong></p>`;
+                        
+                        // Add visual confidence indicator
+                        resultContent += `
+                            <div class="progress-container" style="margin-top: 15px;">
+                                <div class="progress-bar" 
+                                    style="width: ${result.confidence * 100}%; 
+                                    background-color: ${result.prediction === 'Normal' ? 'var(--success-color)' : 'var(--error-color)'}">
+                                </div>
+                            </div>
+                        `;
+                        
+                        // If anomalous, add detailed analysis
+                        if (result.prediction === 'Anomalous' && result.analysis) {
+                            const analysis = result.analysis;
+                            
+                            resultContent += `<div class="summary-box" style="margin-top: 20px;">
+                                <h4 style="margin-top: 0;">Threat Analysis</h4>
+                                <p><strong>Risk Level:</strong> <span class="badge ${analysis.risk_level === 'Critical' || analysis.risk_level === 'High' ? 'badge-anomalous' : ''}">${analysis.risk_level}</span></p>
+                                <p><strong>Interpretation:</strong> ${analysis.interpretation}</p>`;
+                            
+                            // Add potential attack types if available
+                            if (analysis.potential_attack_types && analysis.potential_attack_types.length > 0) {
+                                resultContent += `<h4 style="margin-top: 15px;">Potential Attack Types</h4>`;
+                                resultContent += `<ul style="padding-left: 20px;">`;
+                                analysis.potential_attack_types.forEach(attack => {
+                                    resultContent += `<li><strong>${attack.type}:</strong> ${attack.description}</li>`;
+                                });
+                                resultContent += `</ul>`;
+                            }
+                            
+                            // Add key indicators if available
+                            if (analysis.key_indicators && analysis.key_indicators.length > 0) {
+                                resultContent += `<h4 style="margin-top: 15px;">Key Indicators</h4>`;
+                                resultContent += `<div class="grid-container" style="margin-top: 10px;">`;
+                                analysis.key_indicators.forEach(indicator => {
+                                    resultContent += `
+                                        <div class="grid-item">
+                                            <p style="margin: 0;"><strong>${indicator.feature}</strong></p>
+                                            <p style="margin: 5px 0; color: var(--text-light);">Impact: ${(indicator.importance * 100).toFixed(1)}%</p>
+                                            <p style="margin: 0;">Value: <code>${indicator.value}</code></p>
+                                        </div>
+                                    `;
+                                });
+                                resultContent += `</div>`;
+                            }
+                            
+                            // Add recommendations
+                            if (analysis.recommendations && analysis.recommendations.length > 0) {
+                                resultContent += `<h4 style="margin-top: 15px;">Recommendations</h4>`;
+                                resultContent += `<ul style="padding-left: 20px;">`;
+                                analysis.recommendations.forEach(rec => {
+                                    resultContent += `<li>${rec}</li>`;
+                                });
+                                resultContent += `</ul>`;
+                            }
+                            
+                            resultContent += `</div>`;
+                        }
+                        
+                        predictionResult.innerHTML = resultContent;
                     } else {
-                        predictionResult.innerHTML = `<div class="error"><p>${data.message}</p></div>`;
-                        predictionResult.style.display = 'block';
+                        predictionResult.className = 'result error';
+                        predictionResult.innerHTML = `<p><i class="fas fa-times-circle"></i> ${data.message}</p>`;
                     }
-                } catch (error) {
-                    predictionResult.innerHTML = `<div class="error"><p>Error: ${error.message}</p></div>`;
+                    
                     predictionResult.style.display = 'block';
-                }
+                    
+                    // Scroll to result with smooth animation
+                    predictionResult.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                })
+                .catch(error => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    
+                    predictionResult.className = 'result error';
+                    predictionResult.innerHTML = `<p><i class="fas fa-times-circle"></i> Error: ${error.message}</p>`;
+                    predictionResult.style.display = 'block';
+                });
             });
             
-            // Function to display prediction result
-            function displayPredictionResult(result, container) {
-                const isPredictionAnomaly = result.prediction === 'Anomalous';
-                const predictionClass = isPredictionAnomaly ? 'anomalous' : 'normal';
-                const confidence = (result.confidence * 100).toFixed(2);
-                
-                let html = `
-                    <div class="${predictionClass}">
-                        <h3>Prediction: ${result.prediction}</h3>
-                        <p>Confidence: ${confidence}%</p>
-                `;
-                
-                if (isPredictionAnomaly && result.analysis) {
-                    html += `
-                        <div class="analysis-details">
-                            <h4>Risk Level: ${result.analysis.risk_level}</h4>
-                            <p>${result.analysis.interpretation}</p>
-                    `;
-                    
-                    if (result.analysis.potential_attack_types && result.analysis.potential_attack_types.length > 0) {
-                        html += '<h4>Potential Attack Types:</h4><ul>';
-                        result.analysis.potential_attack_types.forEach(attack => {
-                            html += `<li><strong>${attack.type}</strong>: ${attack.description}</li>`;
-                        });
-                        html += '</ul>';
-                    }
-                    
-                    if (result.analysis.recommendations && result.analysis.recommendations.length > 0) {
-                        html += '<h4>Recommendations:</h4><ul>';
-                        result.analysis.recommendations.forEach(rec => {
-                            html += `<li>${rec}</li>`;
-                        });
-                        html += '</ul>';
-                    }
-                    
-                    html += '</div>';
-                }
-                
-                html += '</div>';
-                container.innerHTML = html;
-                container.style.display = 'block';
-            }
+            // File drop area functionality
+            fileDropArea.addEventListener('click', function() {
+                logFileInput.click();
+            });
             
-            // File drag and drop functionality
+            // Prevent default drag behaviors
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
                 fileDropArea.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
             });
+            
+            // Highlight drop area when item is dragged over it
+            ['dragenter', 'dragover'].forEach(eventName => {
+                fileDropArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                fileDropArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            // Handle dropped files
+            fileDropArea.addEventListener('drop', handleDrop, false);
             
             function preventDefaults(e) {
                 e.preventDefault();
                 e.stopPropagation();
             }
             
-            ['dragenter', 'dragover'].forEach(eventName => {
-                fileDropArea.addEventListener(eventName, () => {
-                    fileDropArea.classList.add('active');
-                });
-            });
+            function highlight() {
+                fileDropArea.classList.add('active');
+            }
             
-            ['dragleave', 'drop'].forEach(eventName => {
-                fileDropArea.addEventListener(eventName, () => {
-                    fileDropArea.classList.remove('active');
-                });
-            });
+            function unhighlight() {
+                fileDropArea.classList.remove('active');
+            }
             
-            fileDropArea.addEventListener('drop', (e) => {
+            function handleDrop(e) {
                 const dt = e.dataTransfer;
                 const files = dt.files;
                 
-                if (files.length > 0) {
+                if (files.length) {
                     logFileInput.files = files;
-                    updateFileName(files[0].name);
+                    handleFiles(files);
                 }
-            });
-            
-            fileDropArea.addEventListener('click', () => {
-                logFileInput.click();
-            });
-            
-            logFileInput.addEventListener('change', () => {
-                if (logFileInput.files.length > 0) {
-                    updateFileName(logFileInput.files[0].name);
-                }
-            });
-            
-            function updateFileName(name) {
-                selectedFileName.textContent = `Selected file: ${name}`;
             }
             
-            // Batch processing form submission
-            batchForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
+            logFileInput.addEventListener('change', function() {
+                handleFiles(this.files);
+            });
+            
+            function handleFiles(files) {
+                if (files.length) {
+                    updateFileInfo(files[0]);
+                }
+            }
+            
+            function updateFileInfo(file) {
+                selectedFileName.innerHTML = `
+                    <div class="info" style="padding: 15px; border-radius: var(--radius-md);">
+                        <p style="margin: 0; display: flex; align-items: center;">
+                            <i class="fas fa-file-csv" style="margin-right: 10px; color: var(--primary-color);"></i>
+                            <strong>${file.name}</strong> (${formatBytes(file.size)})
+                        </p>
+                    </div>
+                `;
+            }
+            
+            function formatBytes(bytes, decimals = 2) {
+                if (bytes === 0) return '0 Bytes';
                 
-                if (!logFileInput.files.length) {
-                    batchResult.innerHTML = '<div class="error"><p>Please select a file to upload.</p></div>';
+                const k = 1024;
+                const dm = decimals < 0 ? 0 : decimals;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+            }
+            
+            // Use default test dataset if available
+            const useDefaultBtn = document.getElementById('useDefaultBtn');
+            if (useDefaultBtn) {
+                useDefaultBtn.addEventListener('click', function() {
+                    const defaultTestLog = document.getElementById('defaultTestLog');
+                    if (defaultTestLog) {
+                        const url = defaultTestLog.textContent.trim();
+                        selectedFileName.innerHTML = `
+                            <div class="info" style="padding: 15px; border-radius: var(--radius-md);">
+                                <p style="margin: 0; display: flex; align-items: center;">
+                                    <i class="fas fa-file-csv" style="margin-right: 10px; color: var(--primary-color);"></i>
+                                    <strong>Default test dataset</strong> (${url.split('/').pop()})
+                                </p>
+                            </div>
+                        `;
+                        
+                        // Store the URL to be used in the form submission
+                        batchForm.dataset.defaultUrl = url;
+                    }
+                });
+            }
+            
+            // Batch prediction form
+            batchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Check if either a file is selected or we're using the default URL
+                const logFile = document.getElementById('logFile').files[0];
+                const defaultUrl = batchForm.dataset.defaultUrl;
+                
+                if (!logFile && !defaultUrl) {
+                    batchResult.className = 'result error';
+                    batchResult.innerHTML = '<p><i class="fas fa-times-circle"></i> Please select a log file or use the default test dataset.</p>';
                     batchResult.style.display = 'block';
                     return;
                 }
                 
-                batchResult.innerHTML = '<div class="info"><p>Processing file... Please wait.</p></div>';
-                batchResult.style.display = 'block';
+                // Reset previous results
+                batchResult.style.display = 'none';
                 analysisConclusion.style.display = 'none';
+                document.getElementById('detailedResults').style.display = 'none';
                 
-                try {
-                    const response = await fetch('/batch_predict', {
+                // Show loading indicator
+                loadingIndicator.style.display = 'block';
+                
+                const submitBtn = batchForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+                submitBtn.disabled = true;
+                
+                let fetchPromise;
+                
+                if (defaultUrl) {
+                    // If using default URL, send it as a parameter
+                    fetchPromise = fetch('/batch_predict', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            use_default: true,
+                            default_url: defaultUrl
+                        })
+                    });
+                } else {
+                    // If using uploaded file, send it as form data
+                    const formData = new FormData();
+                    formData.append('file', logFile);
+                    
+                    fetchPromise = fetch('/batch_predict', {
                         method: 'POST',
                         body: formData
                     });
-                    const data = await response.json();
-                    
-                    if (data.status === 'success') {
-                        displayBatchResult(data, batchResult);
-                    } else {
-                        batchResult.innerHTML = `<div class="error"><p>${data.message}</p></div>`;
-                    }
-                } catch (error) {
-                    batchResult.innerHTML = `<div class="error"><p>Error: ${error.message}</p></div>`;
-                }
-            });
-            
-            // Function to display batch prediction results
-            function displayBatchResult(data, container) {
-                const results = data.results;
-                const summary = data.summary;
-                
-                let html = `
-                    <div class="batch-summary">
-                        <h3>Batch Analysis Complete</h3>
-                        <p>${data.message}</p>
-                    </div>
-                `;
-                
-                if (results.length > 0) {
-                    const limitedResults = results.slice(0, 100); // Limit to first 100 for performance
-                    
-                    html += `
-                        <h4>Sample Results (${limitedResults.length} of ${results.length}):</h4>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Prediction</th>
-                                    <th>Confidence</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                    `;
-                    
-                    limitedResults.forEach((result, index) => {
-                        const rowClass = result.prediction === 'Anomalous' ? 'anomalous-row' : '';
-                        html += `
-                            <tr class="${rowClass}">
-                                <td>${index + 1}</td>
-                                <td>${result.prediction}</td>
-                                <td>${(result.confidence * 100).toFixed(2)}%</td>
-                            </tr>
-                        `;
-                    });
-                    
-                    html += '</tbody></table>';
-                    
-                    // Display conclusion
-                    if (summary) {
-                        // Set threat level color
-                        let threatColor = '';
-                        switch(summary.threat_level) {
-                            case 'Critical': threatColor = '#dc3545'; break;
-                            case 'High': threatColor = '#fd7e14'; break;
-                            case 'Medium': threatColor = '#ffc107'; break;
-                            case 'Low': threatColor = '#28a745'; break;
-                            default: threatColor = '#28a745';
-                        }
-                        
-                        const threatProgress = document.getElementById('threatProgress');
-                        threatProgress.style.width = `${summary.anomaly_percentage}%`;
-                        threatProgress.style.backgroundColor = threatColor;
-                        threatProgress.textContent = `${summary.anomaly_percentage.toFixed(1)}%`;
-                        
-                        const threatLevel = document.getElementById('threatLevel');
-                        threatLevel.textContent = `Threat Level: ${summary.threat_level}`;
-                        threatLevel.className = `threat-level threat-${summary.threat_level.toLowerCase()}`;
-                        
-                        const conclusionText = document.getElementById('conclusionText');
-                        conclusionText.textContent = summary.conclusion;
-                        
-                        // Display recommendations
-                        const sampleThreats = document.getElementById('sampleThreats');
-                        sampleThreats.innerHTML = '';
-                        
-                        if (summary.recommendations && summary.recommendations.length > 0) {
-                            let recHtml = '<h4>Recommendations:</h4><ul>';
-                            summary.recommendations.forEach(rec => {
-                                recHtml += `<li>${rec}</li>`;
-                            });
-                            recHtml += '</ul>';
-                            sampleThreats.innerHTML = recHtml;
-                        }
-                        
-                        analysisConclusion.style.display = 'block';
-                    }
                 }
                 
-                container.innerHTML = html;
-            }
-            
-            // Add new field button
-            document.getElementById('addField').addEventListener('click', () => {
-                const container = document.getElementById('fieldsContainer');
-                
-                // Create field name input
-                const nameLabel = document.createElement('label');
-                nameLabel.textContent = 'Field Name:';
-                
-                const nameInput = document.createElement('input');
-                nameInput.type = 'text';
-                nameInput.placeholder = 'e.g., custom_field';
-                
-                // Create field value input
-                const valueLabel = document.createElement('label');
-                valueLabel.textContent = 'Field Value:';
-                
-                const valueInput = document.createElement('input');
-                valueInput.type = 'text';
-                valueInput.placeholder = 'Value';
-                
-                // Set attributes for the custom field
-                nameInput.addEventListener('input', (e) => {
-                    const fieldName = e.target.value;
-                    if (fieldName) {
-                        valueInput.name = fieldName;
-                        valueInput.id = fieldName;
-                    }
-                });
-                
-                // Create container for the new field
-                const formGroup = document.createElement('div');
-                formGroup.className = 'form-group custom-field';
-                formGroup.appendChild(nameLabel);
-                formGroup.appendChild(nameInput);
-                formGroup.appendChild(valueLabel);
-                formGroup.appendChild(valueInput);
-                
-                container.appendChild(formGroup);
-            });
-            
-            // Tab switching
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    // Deactivate all tabs
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tabContents.forEach(t => t.classList.remove('active'));
-                    
-                    // Activate current tab
-                    tab.classList.add('active');
-                    document.getElementById(tab.getAttribute('data-tab')).classList.add('active');
-                });
-            });
-            
-            // Prevent defaults for drag events
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            
-            // Set up default test dataset button if available
-            const useDefaultBtn = document.getElementById('useDefaultBtn');
-            if (useDefaultBtn) {
-                useDefaultBtn.addEventListener('click', async () => {
-                    const defaultTestLogUrl = document.getElementById('defaultTestLog').textContent;
-                    if (!defaultTestLogUrl) return;
-                    
-                    batchResult.innerHTML = '<div class="info"><p>Loading default test dataset... Please wait.</p></div>';
-                    batchResult.style.display = 'block';
-                    analysisConclusion.style.display = 'none';
-                    
-                    try {
-                        // Create a FormData object for the form submission
-                        const formData = new FormData();
-                        
-                        // Fetch the file from the server
-                        const response = await fetch(defaultTestLogUrl);
-                        if (!response.ok) {
-                            throw new Error(`Failed to fetch test data: ${response.statusText}`);
-                        }
-                        
-                        const blob = await response.blob();
-                        const fileName = defaultTestLogUrl.split('/').pop();
-                        const file = new File([blob], fileName, { type: 'text/csv' });
-                        
-                        // Add the file to the form
-                        formData.append('file', file);
-                        
-                        // Update the UI to show the selected file
-                        selectedFileName.textContent = `Selected file: ${fileName} (Default Test Dataset)`;
-                        
-                        // Send the form data to the batch predict endpoint
-                        const analysisResponse = await fetch('/batch_predict', {
-                            method: 'POST',
-                            body: formData
-                        });
-                        
-                        const data = await analysisResponse.json();
+                fetchPromise
+                    .then(response => response.json())
+                    .then(data => {
+                        // Hide loading indicator
+                        loadingIndicator.style.display = 'none';
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
                         
                         if (data.status === 'success') {
-                            displayBatchResult(data, batchResult);
+                            const result = data.result;
+                            
+                            // Show basic result message
+                            batchResult.className = 'result success';
+                            batchResult.innerHTML = `<p><i class="fas fa-check-circle"></i> Analysis complete! ${result.total_entries} log entries processed.</p>`;
+                            batchResult.style.display = 'block';
+                            
+                            // Show conclusion
+                            const conclusionElem = document.getElementById('conclusionText');
+                            const threatLevel = document.getElementById('threatLevel');
+                            const threatProgress = document.getElementById('threatProgress');
+                            
+                            conclusionElem.textContent = result.conclusion;
+                            
+                            // Set threat level
+                            threatLevel.textContent = `Threat Level: ${result.threat_level}`;
+                            threatLevel.className = 'threat-level';
+                            
+                            // Add appropriate color class
+                            if (result.threat_level === 'Low') {
+                                threatLevel.classList.add('threat-low');
+                                threatProgress.style.backgroundColor = 'var(--success-color)';
+                                threatProgress.style.width = '33%';
+                            } else if (result.threat_level === 'Medium') {
+                                threatLevel.classList.add('threat-medium');
+                                threatProgress.style.backgroundColor = 'var(--warning-color)';
+                                threatProgress.style.width = '66%';
+                            } else {
+                                threatLevel.classList.add('threat-high');
+                                threatProgress.style.backgroundColor = 'var(--error-color)';
+                                threatProgress.style.width = '100%';
+                            }
+                            
+                            // Add sample threats if available
+                            const sampleThreats = document.getElementById('sampleThreats');
+                            sampleThreats.innerHTML = '';
+                            
+                            if (result.sample_anomalies && result.sample_anomalies.length > 0) {
+                                sampleThreats.innerHTML = '<h4>Sample Detected Threats</h4>';
+                                
+                                result.sample_anomalies.forEach(sample => {
+                                    const threatItem = document.createElement('div');
+                                    threatItem.className = 'threat-item';
+                                    
+                                    let sourceIp = sample.srcip || 'Unknown';
+                                    let destIp = sample.dstip || 'Unknown';
+                                    let protocol = sample.proto || 'Unknown';
+                                    
+                                    let threatContent = `
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <div>
+                                                <strong>${sourceIp} → ${destIp}</strong> (${protocol})
+                                            </div>
+                                            <div>
+                                                <span class="badge badge-anomalous">Confidence: ${(sample.confidence * 100).toFixed(1)}%</span>
+                                            </div>
+                                        </div>
+                                    `;
+                                    
+                                    threatItem.innerHTML = threatContent;
+                                    sampleThreats.appendChild(threatItem);
+                                });
+                            }
+                            
+                            // Show analysis conclusion
+                            analysisConclusion.style.display = 'block';
+                            
+                            // Populate detailed results if available
+                            if (result.predictions && result.predictions.length > 0) {
+                                const tbody = document.getElementById('resultsTableBody');
+                                tbody.innerHTML = '';
+                                
+                                result.predictions.forEach((pred, index) => {
+                                    const row = document.createElement('tr');
+                                    if (pred.prediction === 'Anomalous') {
+                                        row.className = 'anomalous-row';
+                                    }
+                                    
+                                    row.innerHTML = `
+                                        <td>${index + 1}</td>
+                                        <td>${pred.srcip || 'N/A'}</td>
+                                        <td>${pred.dstip || 'N/A'}</td>
+                                        <td>${pred.proto || 'N/A'}</td>
+                                        <td>
+                                            <span class="badge ${pred.prediction === 'Normal' ? 'badge-normal' : 'badge-anomalous'}">
+                                                ${pred.prediction}
+                                            </span>
+                                        </td>
+                                        <td>${(pred.confidence * 100).toFixed(1)}%</td>
+                                    `;
+                                    
+                                    tbody.appendChild(row);
+                                });
+                                
+                                document.getElementById('detailedResults').style.display = 'block';
+                            }
+                            
+                            // Scroll to conclusion
+                            analysisConclusion.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         } else {
-                            batchResult.innerHTML = `<div class="error"><p>${data.message}</p></div>`;
+                            batchResult.className = 'result error';
+                            batchResult.innerHTML = `<p><i class="fas fa-times-circle"></i> ${data.message}</p>`;
+                            batchResult.style.display = 'block';
                         }
-                    } catch (error) {
-                        batchResult.innerHTML = `<div class="error"><p>Error: ${error.message}</p></div>`;
-                    }
-                });
-            }
+                    })
+                    .catch(error => {
+                        // Hide loading indicator
+                        loadingIndicator.style.display = 'none';
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                        
+                        batchResult.className = 'result error';
+                        batchResult.innerHTML = `<p><i class="fas fa-times-circle"></i> Error: ${error.message}</p>`;
+                        batchResult.style.display = 'block';
+                    });
+            });
         });
     </script>
 </body>
