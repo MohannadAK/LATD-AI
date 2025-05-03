@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,12 +30,12 @@
             --radius-lg: 0.75rem;
             --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             --transition: all 0.2s ease;
-            
+
             /* Header gradient colors */
             --header-gradient-start: #4361ee;
             --header-gradient-end: #3f37c9;
         }
-        
+
         [data-theme="dark"] {
             --primary-color: #6366f1;
             --primary-hover: #818cf8;
@@ -53,7 +54,7 @@
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
-            
+
             /* Header gradient colors - darker in dark mode */
             --header-gradient-start: #4f46e5;
             --header-gradient-end: #4338ca;
@@ -90,7 +91,7 @@
             box-shadow: var(--shadow-lg);
             position: relative;
         }
-        
+
         /* Theme toggle styles */
         .theme-toggle {
             position: absolute;
@@ -109,21 +110,25 @@
             transition: all 0.3s ease;
             z-index: 10;
         }
-        
+
         .theme-toggle:hover {
             background: rgba(255, 255, 255, 0.3);
             transform: scale(1.05);
         }
-        
+
         .theme-toggle i {
             font-size: 1.2rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
-        
+
         /* Hide the sun icon when in light mode */
         [data-theme="light"] .theme-toggle .fa-sun {
             display: none;
         }
-        
+
         /* Hide the moon icon when in dark mode */
         [data-theme="dark"] .theme-toggle .fa-moon {
             display: none;
@@ -204,7 +209,7 @@
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
         }
-        
+
         /* Dark mode adjustments */
         [data-theme="dark"] input[type="text"],
         [data-theme="dark"] input[type="number"],
@@ -212,7 +217,7 @@
             background-color: rgba(31, 41, 55, 0.8);
             border-color: var(--border-color);
         }
-        
+
         [data-theme="dark"] input[type="text"]:focus,
         [data-theme="dark"] input[type="number"]:focus,
         [data-theme="dark"] textarea:focus {
@@ -281,7 +286,7 @@
             border: 1px solid rgba(74, 222, 128, 0.4);
             border-left: 4px solid var(--success-color);
         }
-        
+
         [data-theme="dark"] .success {
             color: #4ade80;
             background-color: rgba(74, 222, 128, 0.1);
@@ -294,7 +299,7 @@
             border: 1px solid rgba(248, 113, 113, 0.4);
             border-left: 4px solid var(--error-color);
         }
-        
+
         [data-theme="dark"] .error {
             color: #f87171;
             background-color: rgba(248, 113, 113, 0.1);
@@ -307,7 +312,7 @@
             border: 1px solid rgba(251, 191, 36, 0.4);
             border-left: 4px solid var(--warning-color);
         }
-        
+
         [data-theme="dark"] .warning {
             color: #fbbf24;
             background-color: rgba(251, 191, 36, 0.1);
@@ -320,7 +325,7 @@
             border: 1px solid rgba(96, 165, 250, 0.4);
             border-left: 4px solid var(--info-color);
         }
-        
+
         [data-theme="dark"] .info {
             color: #60a5fa;
             background-color: rgba(96, 165, 250, 0.1);
@@ -333,7 +338,7 @@
             border: 1px solid rgba(74, 222, 128, 0.4);
             border-left: 4px solid var(--success-color);
         }
-        
+
         [data-theme="dark"] .normal {
             color: #4ade80;
             background-color: rgba(74, 222, 128, 0.1);
@@ -346,7 +351,7 @@
             border: 1px solid rgba(248, 113, 113, 0.4);
             border-left: 4px solid var(--error-color);
         }
-        
+
         [data-theme="dark"] .anomalous {
             color: #fca5a5;
             background-color: rgba(248, 113, 113, 0.2);
@@ -391,7 +396,7 @@
             font-weight: 600;
             background-color: rgba(67, 97, 238, 0.1);
         }
-        
+
         [data-theme="dark"] .tab.active {
             background-color: rgba(99, 102, 241, 0.2);
         }
@@ -465,7 +470,8 @@
             box-shadow: var(--shadow-sm);
         }
 
-        th, td {
+        th,
+        td {
             padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
@@ -476,7 +482,7 @@
             font-weight: 600;
             color: var(--text-secondary);
         }
-        
+
         [data-theme="dark"] th {
             background-color: rgba(99, 102, 241, 0.1);
         }
@@ -484,7 +490,7 @@
         tr:hover {
             background-color: rgba(67, 97, 238, 0.05);
         }
-        
+
         [data-theme="dark"] tr:hover {
             background-color: rgba(99, 102, 241, 0.1);
         }
@@ -496,11 +502,11 @@
         tr.anomalous-row:hover {
             background-color: rgba(248, 113, 113, 0.2);
         }
-        
+
         [data-theme="dark"] tr.anomalous-row {
             background-color: rgba(248, 113, 113, 0.25);
         }
-        
+
         [data-theme="dark"] tr.anomalous-row:hover {
             background-color: rgba(248, 113, 113, 0.35);
         }
@@ -527,7 +533,7 @@
             transform: translateX(5px);
             box-shadow: var(--shadow-sm);
         }
-        
+
         [data-theme="dark"] .threat-item:hover {
             background-color: rgba(248, 113, 113, 0.25);
         }
@@ -547,7 +553,7 @@
             border-color: var(--primary-color);
             background-color: rgba(67, 97, 238, 0.05);
         }
-        
+
         [data-theme="dark"] .file-drop-area:hover {
             background-color: rgba(99, 102, 241, 0.1);
         }
@@ -577,11 +583,16 @@
             color: #0f5132;
         }
 
+        [data-theme="dark"] .badge-normal {
+            background-color: rgba(74, 222, 128, 0.3);
+            color: #4ade80;
+        }
+
         .badge-anomalous {
             background-color: rgba(248, 113, 113, 0.2);
             color: #842029;
         }
-        
+
         [data-theme="dark"] .badge-anomalous {
             background-color: rgba(248, 113, 113, 0.3);
             color: #fca5a5;
@@ -612,7 +623,7 @@
             border: 1px solid var(--border-color);
             transition: var(--transition);
         }
-        
+
         [data-theme="dark"] .grid-item {
             background-color: rgba(31, 41, 55, 0.6);
         }
@@ -627,11 +638,11 @@
             .two-columns {
                 grid-template-columns: 1fr;
             }
-            
+
             .tabs {
                 flex-direction: column;
             }
-            
+
             .tab {
                 margin-bottom: 10px;
             }
@@ -642,6 +653,7 @@
                 opacity: 0;
                 transform: translateY(10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -653,6 +665,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -676,11 +689,17 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
+
 <body>
     <header>
         <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
@@ -711,25 +730,25 @@
             <form id="modelForm">
                 <div class="form-group">
                     <label for="model_path">Model Path:</label>
-                    <input type="text" id="model_path" name="model_path" required 
-                           placeholder="Enter the path to your trained model directory"
-                           value="{{ model_path }}">
+                    <input type="text" id="model_path" name="model_path" required
+                        placeholder="Enter the path to your trained model directory" value="{{ model_path }}">
                 </div>
                 <button type="submit"><i class="fas fa-upload"></i>Load Model</button>
             </form>
             <div id="modelResult" class="result"></div>
         </div>
-        
+
         <div class="tabs">
             <div class="tab" data-tab="single"><i class="fas fa-file-alt"></i>Single Log Entry</div>
             <div class="tab active" data-tab="batch"><i class="fas fa-file-csv"></i>Log File Analysis</div>
         </div>
-        
+
         <div class="tab-content" id="single">
             <div class="section">
                 <h2><i class="fas fa-search"></i>Single Log Entry Analysis</h2>
                 <form id="singleLogForm">
-                    <p>Enter the log attributes below. For numeric fields, enter numbers; for categorical fields, enter the appropriate string values.</p>
+                    <p>Enter the log attributes below. For numeric fields, enter numbers; for categorical fields, enter
+                        the appropriate string values.</p>
                     <div id="fieldsContainer" class="grid-container">
                         <!-- Base fields - add more fields as needed -->
                         <div class="form-group">
@@ -770,14 +789,15 @@
                         </div>
                     </div>
                     <div style="display: flex; gap: 10px; margin-top: 20px;">
-                        <button type="button" id="addField" class="btn-alt"><i class="fas fa-plus"></i>Add Custom Field</button>
+                        <button type="button" id="addField" class="btn-alt"><i class="fas fa-plus"></i>Add Custom
+                            Field</button>
                         <button type="submit"><i class="fas fa-bolt"></i>Analyze</button>
                     </div>
                 </form>
                 <div id="predictionResult" class="result"></div>
             </div>
         </div>
-        
+
         <div class="tab-content active" id="batch">
             <div class="section">
                 <h2><i class="fas fa-file-csv"></i>Log File Analysis</h2>
@@ -792,10 +812,14 @@
                     <div id="selectedFileName" style="margin-bottom: 15px;"></div>
                     {% if default_test_log %}
                     <div class="info" style="margin-bottom: 20px; padding: 20px; border-radius: var(--radius-md);">
-                        <h4 style="margin-top: 0; display: flex; align-items: center;"><i class="fas fa-lightbulb" style="margin-right: 10px; color: var(--info-color);"></i>Default Test Dataset Available</h4>
+                        <h4 style="margin-top: 0; display: flex; align-items: center;"><i class="fas fa-lightbulb"
+                                style="margin-right: 10px; color: var(--info-color);"></i>Default Test Dataset Available
+                        </h4>
                         <p>You can use a pre-configured test dataset to quickly try out the model's capabilities.</p>
-                        <p><strong>Test file:</strong> <span id="defaultTestLog" style="font-family: monospace;">{{ default_test_log }}</span></p>
-                        <button type="button" id="useDefaultBtn" class="btn-success" style="margin-top: 15px;"><i class="fas fa-check"></i>Use Default Test Dataset</button>
+                        <p><strong>Test file:</strong> <span id="defaultTestLog" style="font-family: monospace;">{{
+                                default_test_log }}</span></p>
+                        <button type="button" id="useDefaultBtn" class="btn-success" style="margin-top: 15px;"><i
+                                class="fas fa-check"></i>Use Default Test Dataset</button>
                     </div>
                     {% endif %}
                     <div class="loading" id="loadingIndicator">
@@ -839,32 +863,32 @@
 
     <script>
         // Theme toggle functionality
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const themeToggle = document.getElementById('themeToggle');
-            
+
             // Check for saved theme preference or use OS preference
             const savedTheme = localStorage.getItem('theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            
+
             // Set initial theme based on preference
             if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
                 document.documentElement.setAttribute('data-theme', 'dark');
             } else {
                 document.documentElement.setAttribute('data-theme', 'light');
             }
-            
+
             // Toggle theme when button is clicked
-            themeToggle.addEventListener('click', function() {
+            themeToggle.addEventListener('click', function () {
                 const currentTheme = document.documentElement.getAttribute('data-theme');
                 const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                
+
                 document.documentElement.setAttribute('data-theme', newTheme);
                 localStorage.setItem('theme', newTheme);
-                
+
                 // Add transition animation to body
                 document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
             });
-            
+
             const modelForm = document.getElementById('modelForm');
             const modelResult = document.getElementById('modelResult');
             const singleLogForm = document.getElementById('singleLogForm');
@@ -878,11 +902,11 @@
             const tabs = document.querySelectorAll('.tab');
             const tabContents = document.querySelectorAll('.tab-content');
             const loadingIndicator = document.getElementById('loadingIndicator');
-            
+
             // Check if model is already loaded from server-side
             const autoLoadInfo = document.getElementById('autoLoadInfo');
             const isModelLoaded = autoLoadInfo.querySelector('.success') !== null;
-            
+
             // If model is already loaded, make UI immediately usable
             if (isModelLoaded) {
                 // Ensure the result divs are visible initially
@@ -890,95 +914,95 @@
                 modelResult.classList.add('success');
                 modelResult.innerHTML = '<p>Model loaded successfully! You can now make predictions.</p>';
             }
-            
+
             // Tab switching with smooth transitions
             tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
+                tab.addEventListener('click', function () {
                     const tabId = this.getAttribute('data-tab');
-                    
+
                     // Remove active class from all tabs and contents
                     tabs.forEach(t => t.classList.remove('active'));
                     tabContents.forEach(c => c.classList.remove('active'));
-                    
+
                     // Add active class to current tab and content
                     this.classList.add('active');
                     document.getElementById(tabId).classList.add('active');
                 });
             });
-            
+
             // Load model form with improved feedback
-            modelForm.addEventListener('submit', function(e) {
+            modelForm.addEventListener('submit', function (e) {
                 e.preventDefault();
-                
+
                 const formData = new FormData(modelForm);
                 const submitBtn = modelForm.querySelector('button[type="submit"]');
                 const originalText = submitBtn.innerHTML;
-                
+
                 // Show loading state
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
                 submitBtn.disabled = true;
-                
+
                 fetch('/load_model', {
                     method: 'POST',
                     body: formData
                 })
-                .then(response => response.json())
-                .then(data => {
-                    modelResult.innerHTML = '';
-                    
-                    if(data.status === 'success') {
-                        modelResult.classList.remove('error');
-                        modelResult.classList.add('success');
-                        
-                        // Update the current model path display
-                        const modelPathDisplay = document.getElementById('currentModelPath');
-                        if (modelPathDisplay) {
-                            modelPathDisplay.textContent = formData.get('model_path');
-                        }
-                        
-                        // Update auto load info
-                        autoLoadInfo.innerHTML = `
+                    .then(response => response.json())
+                    .then(data => {
+                        modelResult.innerHTML = '';
+
+                        if (data.status === 'success') {
+                            modelResult.classList.remove('error');
+                            modelResult.classList.add('success');
+
+                            // Update the current model path display
+                            const modelPathDisplay = document.getElementById('currentModelPath');
+                            if (modelPathDisplay) {
+                                modelPathDisplay.textContent = formData.get('model_path');
+                            }
+
+                            // Update auto load info
+                            autoLoadInfo.innerHTML = `
                             <div class="success">
                                 <p>✅ Model loaded successfully from: <span id="currentModelPath">${formData.get('model_path')}</span></p>
                                 <p>You can start using the model right away, or load a different model below.</p>
                             </div>
                         `;
-                    } else {
+                        } else {
+                            modelResult.classList.remove('success');
+                            modelResult.classList.add('error');
+                        }
+
+                        modelResult.innerHTML = `<p>${data.message}</p>`;
+                        modelResult.style.display = 'block';
+
+                        // Reset button
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    })
+                    .catch(error => {
                         modelResult.classList.remove('success');
                         modelResult.classList.add('error');
-                    }
-                    
-                    modelResult.innerHTML = `<p>${data.message}</p>`;
-                    modelResult.style.display = 'block';
-                    
-                    // Reset button
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                })
-                .catch(error => {
-                    modelResult.classList.remove('success');
-                    modelResult.classList.add('error');
-                    modelResult.innerHTML = `<p>Error: ${error.message}</p>`;
-                    modelResult.style.display = 'block';
-                    
-                    // Reset button
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                });
+                        modelResult.innerHTML = `<p>Error: ${error.message}</p>`;
+                        modelResult.style.display = 'block';
+
+                        // Reset button
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    });
             });
-            
+
             // Add custom field functionality
             const addFieldBtn = document.getElementById('addField');
-            addFieldBtn.addEventListener('click', function() {
+            addFieldBtn.addEventListener('click', function () {
                 const fieldsContainer = document.getElementById('fieldsContainer');
-                
+
                 // Create row for the new field
                 const fieldGroup = document.createElement('div');
                 fieldGroup.className = 'form-group';
-                
+
                 // Create a random ID for the new field
                 const randomId = 'field_' + Math.random().toString(36).substring(2, 9);
-                
+
                 // Create delete button
                 const deleteBtn = document.createElement('button');
                 deleteBtn.type = 'button';
@@ -992,12 +1016,12 @@
                 deleteBtn.style.border = 'none';
                 deleteBtn.style.padding = '5px';
                 deleteBtn.style.cursor = 'pointer';
-                
+
                 // Create label
                 const label = document.createElement('label');
                 label.setAttribute('for', randomId);
                 label.textContent = 'Field Name:';
-                
+
                 // Create field name input
                 const nameInput = document.createElement('input');
                 nameInput.setAttribute('type', 'text');
@@ -1005,68 +1029,68 @@
                 nameInput.setAttribute('name', randomId);
                 nameInput.setAttribute('placeholder', 'e.g., packets, bytes, service');
                 nameInput.style.marginBottom = '10px';
-                
+
                 // Create field value container for positioning
                 const valueContainer = document.createElement('div');
                 valueContainer.style.marginTop = '10px';
-                
+
                 // Create field value label
                 const valueLabel = document.createElement('label');
                 valueLabel.setAttribute('for', randomId + '_value');
                 valueLabel.textContent = 'Value:';
-                
+
                 // Create field value input
                 const valueInput = document.createElement('input');
                 valueInput.setAttribute('type', 'text');
                 valueInput.setAttribute('id', randomId + '_value');
                 valueInput.setAttribute('name', randomId + '_value');
                 valueInput.setAttribute('placeholder', 'Enter value');
-                
+
                 // Add elements to the container
                 valueContainer.appendChild(valueLabel);
                 valueContainer.appendChild(valueInput);
-                
+
                 fieldGroup.appendChild(deleteBtn);
                 fieldGroup.appendChild(label);
                 fieldGroup.appendChild(nameInput);
                 fieldGroup.appendChild(valueContainer);
-                
+
                 // Set position relative for absolute positioning of delete button
                 fieldGroup.style.position = 'relative';
                 fieldGroup.style.padding = '15px';
                 fieldGroup.style.backgroundColor = 'rgba(67, 97, 238, 0.03)';
                 fieldGroup.style.borderRadius = 'var(--radius-md)';
-                
+
                 // Add to container with animation
                 fieldGroup.style.opacity = '0';
                 fieldGroup.style.transform = 'translateY(10px)';
                 fieldsContainer.appendChild(fieldGroup);
-                
+
                 // Trigger animation
                 setTimeout(() => {
                     fieldGroup.style.transition = 'all 0.3s ease-out';
                     fieldGroup.style.opacity = '1';
                     fieldGroup.style.transform = 'translateY(0)';
                 }, 10);
-                
+
                 // Add delete functionality
-                deleteBtn.addEventListener('click', function() {
+                deleteBtn.addEventListener('click', function () {
                     fieldGroup.style.opacity = '0';
                     fieldGroup.style.transform = 'translateY(10px)';
-                    
+
                     setTimeout(() => {
                         fieldsContainer.removeChild(fieldGroup);
                     }, 300);
                 });
             });
-            
+
             // Single log prediction form
-            singleLogForm.addEventListener('submit', function(e) {
+            singleLogForm.addEventListener('submit', function (e) {
                 e.preventDefault();
-                
+
                 const formData = {};
                 const inputs = singleLogForm.querySelectorAll('input');
-                
+
                 // Collect form data
                 inputs.forEach(input => {
                     // Skip value inputs from custom fields, they will be handled separately
@@ -1086,14 +1110,14 @@
                         }
                     }
                 });
-                
+
                 const submitBtn = singleLogForm.querySelector('button[type="submit"]');
                 const originalText = submitBtn.innerHTML;
-                
+
                 // Show loading state
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
                 submitBtn.disabled = true;
-                
+
                 fetch('/predict', {
                     method: 'POST',
                     headers: {
@@ -1101,29 +1125,29 @@
                     },
                     body: JSON.stringify(formData)
                 })
-                .then(response => response.json())
-                .then(data => {
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                    
-                    if (data.status === 'success') {
-                        const result = data.result;
-                        predictionResult.innerHTML = '';
-                        
-                        // Add class based on prediction
-                        predictionResult.className = 'result';
-                        if (result.prediction === 'Normal') {
-                            predictionResult.classList.add('normal');
-                        } else {
-                            predictionResult.classList.add('anomalous');
-                        }
-                        
-                        // Create result content with improved design
-                        let resultContent = `<h3><i class="${result.prediction === 'Normal' ? 'fas fa-shield-alt' : 'fas fa-exclamation-triangle'}"></i> Prediction: ${result.prediction}</h3>`;
-                        resultContent += `<p>Confidence: <strong>${(result.confidence * 100).toFixed(2)}%</strong></p>`;
-                        
-                        // Add visual confidence indicator
-                        resultContent += `
+                    .then(response => response.json())
+                    .then(data => {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+
+                        if (data.status === 'success') {
+                            const result = data.result;
+                            predictionResult.innerHTML = '';
+
+                            // Add class based on prediction
+                            predictionResult.className = 'result';
+                            if (result.prediction === 'Normal') {
+                                predictionResult.classList.add('normal');
+                            } else {
+                                predictionResult.classList.add('anomalous');
+                            }
+
+                            // Create result content with improved design
+                            let resultContent = `<h3><i class="${result.prediction === 'Normal' ? 'fas fa-shield-alt' : 'fas fa-exclamation-triangle'}"></i> Prediction: ${result.prediction}</h3>`;
+                            resultContent += `<p>Confidence: <strong>${(result.confidence * 100).toFixed(2)}%</strong></p>`;
+
+                            // Add visual confidence indicator
+                            resultContent += `
                             <div class="progress-container" style="margin-top: 15px;">
                                 <div class="progress-bar" 
                                     style="width: ${result.confidence * 100}%; 
@@ -1131,132 +1155,132 @@
                                 </div>
                             </div>
                         `;
-                        
-                        // If anomalous, add detailed analysis
-                        if (result.prediction === 'Anomalous' && result.analysis) {
-                            const analysis = result.analysis;
-                            
-                            resultContent += `<div class="summary-box" style="margin-top: 20px;">
+
+                            // If anomalous, add detailed analysis
+                            if (result.prediction === 'Anomalous' && result.analysis) {
+                                const analysis = result.analysis;
+
+                                resultContent += `<div class="summary-box" style="margin-top: 20px;">
                                 <h4 style="margin-top: 0;">Threat Analysis</h4>
                                 <p><strong>Risk Level:</strong> <span class="badge ${analysis.risk_level === 'Critical' || analysis.risk_level === 'High' ? 'badge-anomalous' : ''}">${analysis.risk_level}</span></p>
                                 <p><strong>Interpretation:</strong> ${analysis.interpretation}</p>`;
-                            
-                            // Add potential attack types if available
-                            if (analysis.potential_attack_types && analysis.potential_attack_types.length > 0) {
-                                resultContent += `<h4 style="margin-top: 15px;">Potential Attack Types</h4>`;
-                                resultContent += `<ul style="padding-left: 20px;">`;
-                                analysis.potential_attack_types.forEach(attack => {
-                                    resultContent += `<li><strong>${attack.type}:</strong> ${attack.description}</li>`;
-                                });
-                                resultContent += `</ul>`;
-                            }
-                            
-                            // Add key indicators if available
-                            if (analysis.key_indicators && analysis.key_indicators.length > 0) {
-                                resultContent += `<h4 style="margin-top: 15px;">Key Indicators</h4>`;
-                                resultContent += `<div class="grid-container" style="margin-top: 10px;">`;
-                                analysis.key_indicators.forEach(indicator => {
-                                    resultContent += `
+
+                                // Add potential attack types if available
+                                if (analysis.potential_attack_types && analysis.potential_attack_types.length > 0) {
+                                    resultContent += `<h4 style="margin-top: 15px;">Potential Attack Types</h4>`;
+                                    resultContent += `<ul style="padding-left: 20px;">`;
+                                    analysis.potential_attack_types.forEach(attack => {
+                                        resultContent += `<li><strong>${attack.type}:</strong> ${attack.description}</li>`;
+                                    });
+                                    resultContent += `</ul>`;
+                                }
+
+                                // Add key indicators if available
+                                if (analysis.key_indicators && analysis.key_indicators.length > 0) {
+                                    resultContent += `<h4 style="margin-top: 15px;">Key Indicators</h4>`;
+                                    resultContent += `<div class="grid-container" style="margin-top: 10px;">`;
+                                    analysis.key_indicators.forEach(indicator => {
+                                        resultContent += `
                                         <div class="grid-item">
                                             <p style="margin: 0;"><strong>${indicator.feature}</strong></p>
                                             <p style="margin: 5px 0; color: var(--text-light);">Impact: ${(indicator.importance * 100).toFixed(1)}%</p>
                                             <p style="margin: 0;">Value: <code>${indicator.value}</code></p>
                                         </div>
                                     `;
-                                });
+                                    });
+                                    resultContent += `</div>`;
+                                }
+
+                                // Add recommendations
+                                if (analysis.recommendations && analysis.recommendations.length > 0) {
+                                    resultContent += `<h4 style="margin-top: 15px;">Recommendations</h4>`;
+                                    resultContent += `<ul style="padding-left: 20px;">`;
+                                    analysis.recommendations.forEach(rec => {
+                                        resultContent += `<li>${rec}</li>`;
+                                    });
+                                    resultContent += `</ul>`;
+                                }
+
                                 resultContent += `</div>`;
                             }
-                            
-                            // Add recommendations
-                            if (analysis.recommendations && analysis.recommendations.length > 0) {
-                                resultContent += `<h4 style="margin-top: 15px;">Recommendations</h4>`;
-                                resultContent += `<ul style="padding-left: 20px;">`;
-                                analysis.recommendations.forEach(rec => {
-                                    resultContent += `<li>${rec}</li>`;
-                                });
-                                resultContent += `</ul>`;
-                            }
-                            
-                            resultContent += `</div>`;
+
+                            predictionResult.innerHTML = resultContent;
+                        } else {
+                            predictionResult.className = 'result error';
+                            predictionResult.innerHTML = `<p><i class="fas fa-times-circle"></i> ${data.message}</p>`;
                         }
-                        
-                        predictionResult.innerHTML = resultContent;
-                    } else {
+
+                        predictionResult.style.display = 'block';
+
+                        // Scroll to result with smooth animation
+                        predictionResult.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    })
+                    .catch(error => {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+
                         predictionResult.className = 'result error';
-                        predictionResult.innerHTML = `<p><i class="fas fa-times-circle"></i> ${data.message}</p>`;
-                    }
-                    
-                    predictionResult.style.display = 'block';
-                    
-                    // Scroll to result with smooth animation
-                    predictionResult.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                })
-                .catch(error => {
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                    
-                    predictionResult.className = 'result error';
-                    predictionResult.innerHTML = `<p><i class="fas fa-times-circle"></i> Error: ${error.message}</p>`;
-                    predictionResult.style.display = 'block';
-                });
+                        predictionResult.innerHTML = `<p><i class="fas fa-times-circle"></i> Error: ${error.message}</p>`;
+                        predictionResult.style.display = 'block';
+                    });
             });
-            
+
             // File drop area functionality
-            fileDropArea.addEventListener('click', function() {
+            fileDropArea.addEventListener('click', function () {
                 logFileInput.click();
             });
-            
+
             // Prevent default drag behaviors
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
                 fileDropArea.addEventListener(eventName, preventDefaults, false);
                 document.body.addEventListener(eventName, preventDefaults, false);
             });
-            
+
             // Highlight drop area when item is dragged over it
             ['dragenter', 'dragover'].forEach(eventName => {
                 fileDropArea.addEventListener(eventName, highlight, false);
             });
-            
+
             ['dragleave', 'drop'].forEach(eventName => {
                 fileDropArea.addEventListener(eventName, unhighlight, false);
             });
-            
+
             // Handle dropped files
             fileDropArea.addEventListener('drop', handleDrop, false);
-            
+
             function preventDefaults(e) {
                 e.preventDefault();
                 e.stopPropagation();
             }
-            
+
             function highlight() {
                 fileDropArea.classList.add('active');
             }
-            
+
             function unhighlight() {
                 fileDropArea.classList.remove('active');
             }
-            
+
             function handleDrop(e) {
                 const dt = e.dataTransfer;
                 const files = dt.files;
-                
+
                 if (files.length) {
                     logFileInput.files = files;
                     handleFiles(files);
                 }
             }
-            
-            logFileInput.addEventListener('change', function() {
+
+            logFileInput.addEventListener('change', function () {
                 handleFiles(this.files);
             });
-            
+
             function handleFiles(files) {
                 if (files.length) {
                     updateFileInfo(files[0]);
                 }
             }
-            
+
             function updateFileInfo(file) {
                 selectedFileName.innerHTML = `
                     <div class="info" style="padding: 15px; border-radius: var(--radius-md);">
@@ -1267,23 +1291,23 @@
                     </div>
                 `;
             }
-            
+
             function formatBytes(bytes, decimals = 2) {
                 if (bytes === 0) return '0 Bytes';
-                
+
                 const k = 1024;
                 const dm = decimals < 0 ? 0 : decimals;
                 const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-                
+
                 const i = Math.floor(Math.log(bytes) / Math.log(k));
-                
+
                 return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
             }
-            
+
             // Use default test dataset if available
             const useDefaultBtn = document.getElementById('useDefaultBtn');
             if (useDefaultBtn) {
-                useDefaultBtn.addEventListener('click', function() {
+                useDefaultBtn.addEventListener('click', function () {
                     const defaultTestLog = document.getElementById('defaultTestLog');
                     if (defaultTestLog) {
                         const url = defaultTestLog.textContent.trim();
@@ -1295,43 +1319,43 @@
                                 </p>
                             </div>
                         `;
-                        
+
                         // Store the URL to be used in the form submission
                         batchForm.dataset.defaultUrl = url;
                     }
                 });
             }
-            
+
             // Batch prediction form
-            batchForm.addEventListener('submit', function(e) {
+            batchForm.addEventListener('submit', function (e) {
                 e.preventDefault();
-                
+
                 // Check if either a file is selected or we're using the default URL
                 const logFile = document.getElementById('logFile').files[0];
                 const defaultUrl = batchForm.dataset.defaultUrl;
-                
+
                 if (!logFile && !defaultUrl) {
                     batchResult.className = 'result error';
                     batchResult.innerHTML = '<p><i class="fas fa-times-circle"></i> Please select a log file or use the default test dataset.</p>';
                     batchResult.style.display = 'block';
                     return;
                 }
-                
+
                 // Reset previous results
                 batchResult.style.display = 'none';
                 analysisConclusion.style.display = 'none';
                 document.getElementById('detailedResults').style.display = 'none';
-                
+
                 // Show loading indicator
                 loadingIndicator.style.display = 'block';
-                
+
                 const submitBtn = batchForm.querySelector('button[type="submit"]');
                 const originalText = submitBtn.innerHTML;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
                 submitBtn.disabled = true;
-                
+
                 let fetchPromise;
-                
+
                 if (defaultUrl) {
                     // If using default URL, send it as a parameter
                     fetchPromise = fetch('/batch_predict', {
@@ -1348,13 +1372,13 @@
                     // If using uploaded file, send it as form data
                     const formData = new FormData();
                     formData.append('file', logFile);
-                    
+
                     fetchPromise = fetch('/batch_predict', {
                         method: 'POST',
                         body: formData
                     });
                 }
-                
+
                 fetchPromise
                     .then(response => response.json())
                     .then(data => {
@@ -1362,26 +1386,26 @@
                         loadingIndicator.style.display = 'none';
                         submitBtn.innerHTML = originalText;
                         submitBtn.disabled = false;
-                        
+
                         if (data.status === 'success') {
                             const result = data.result;
-                            
+
                             // Show basic result message
                             batchResult.className = 'result success';
                             batchResult.innerHTML = `<p><i class="fas fa-check-circle"></i> Analysis complete! ${result.total_entries} log entries processed.</p>`;
                             batchResult.style.display = 'block';
-                            
+
                             // Show conclusion
                             const conclusionElem = document.getElementById('conclusionText');
                             const threatLevel = document.getElementById('threatLevel');
                             const threatProgress = document.getElementById('threatProgress');
-                            
+
                             conclusionElem.textContent = result.conclusion;
-                            
+
                             // Set threat level
                             threatLevel.textContent = `Threat Level: ${result.threat_level}`;
                             threatLevel.className = 'threat-level';
-                            
+
                             // Add appropriate color class
                             if (result.threat_level === 'Low') {
                                 threatLevel.classList.add('threat-low');
@@ -1396,22 +1420,22 @@
                                 threatProgress.style.backgroundColor = 'var(--error-color)';
                                 threatProgress.style.width = '100%';
                             }
-                            
+
                             // Add sample threats if available
                             const sampleThreats = document.getElementById('sampleThreats');
                             sampleThreats.innerHTML = '';
-                            
+
                             if (result.sample_anomalies && result.sample_anomalies.length > 0) {
                                 sampleThreats.innerHTML = '<h4>Sample Detected Threats</h4>';
-                                
+
                                 result.sample_anomalies.forEach(sample => {
                                     const threatItem = document.createElement('div');
                                     threatItem.className = 'threat-item';
-                                    
+
                                     let sourceIp = sample.srcip || 'Unknown';
                                     let destIp = sample.dstip || 'Unknown';
                                     let protocol = sample.proto || 'Unknown';
-                                    
+
                                     let threatContent = `
                                         <div style="display: flex; justify-content: space-between; align-items: center;">
                                             <div>
@@ -1422,26 +1446,26 @@
                                             </div>
                                         </div>
                                     `;
-                                    
+
                                     threatItem.innerHTML = threatContent;
                                     sampleThreats.appendChild(threatItem);
                                 });
                             }
-                            
+
                             // Show analysis conclusion
                             analysisConclusion.style.display = 'block';
-                            
+
                             // Populate detailed results if available
                             if (result.predictions && result.predictions.length > 0) {
                                 const tbody = document.getElementById('resultsTableBody');
                                 tbody.innerHTML = '';
-                                
+
                                 result.predictions.forEach((pred, index) => {
                                     const row = document.createElement('tr');
                                     if (pred.prediction === 'Anomalous') {
                                         row.className = 'anomalous-row';
                                     }
-                                    
+
                                     row.innerHTML = `
                                         <td>${index + 1}</td>
                                         <td>${pred.srcip || 'N/A'}</td>
@@ -1454,13 +1478,13 @@
                                         </td>
                                         <td>${(pred.confidence * 100).toFixed(1)}%</td>
                                     `;
-                                    
+
                                     tbody.appendChild(row);
                                 });
-                                
+
                                 document.getElementById('detailedResults').style.display = 'block';
                             }
-                            
+
                             // Scroll to conclusion
                             analysisConclusion.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         } else {
@@ -1474,7 +1498,7 @@
                         loadingIndicator.style.display = 'none';
                         submitBtn.innerHTML = originalText;
                         submitBtn.disabled = false;
-                        
+
                         batchResult.className = 'result error';
                         batchResult.innerHTML = `<p><i class="fas fa-times-circle"></i> Error: ${error.message}</p>`;
                         batchResult.style.display = 'block';
@@ -1483,4 +1507,5 @@
         });
     </script>
 </body>
-</html> 
+
+</html>
