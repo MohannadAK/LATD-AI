@@ -3,6 +3,7 @@ import json
 import pandas as pd
 import sys
 import glob
+import numpy as np
 from datetime import datetime
 from werkzeug.utils import send_from_directory
 
@@ -12,8 +13,25 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from flask import Flask, request, render_template, jsonify
 from core.model import load_model, predict_log_instance
 
+# Custom JSON encoder to handle NaN, Infinity values
+class NpEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            # Replace NaN and Infinity with None (null in JSON)
+            if np.isnan(obj) or np.isinf(obj):
+                return None
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        if pd.isna(obj):
+            return None
+        return super(NpEncoder, self).default(obj)
+
 app = Flask(__name__)
 app.template_folder = '../templates'
+app.json_encoder = NpEncoder  # Use our custom encoder for JSON responses
 
 # Global variable to store the loaded model
 model_dict = None
@@ -119,8 +137,16 @@ def predict():
         # Get data from request
         data = request.json
         
+        # Clean data by replacing any NaN values with None
+        cleaned_data = {}
+        for key, value in data.items():
+            if isinstance(value, str) and value.lower() == 'nan':
+                cleaned_data[key] = None
+            else:
+                cleaned_data[key] = value
+        
         # Make prediction
-        result = predict_log_instance(data, model_dict)
+        result = predict_log_instance(cleaned_data, model_dict)
         
         # Enhance the response with additional analysis
         analysis = {}
@@ -149,7 +175,7 @@ def predict():
                         key_indicators.append({
                             'feature': feature,
                             'importance': importance,
-                            'value': data.get(feature, 'N/A')
+                            'value': cleaned_data.get(feature, 'N/A')
                         })
                 analysis['key_indicators'] = key_indicators
                 
@@ -157,7 +183,7 @@ def predict():
             analysis['interpretation'] = interpretation
             
             # Add potential attack type analysis
-            potential_attack_types = identify_potential_attack_types(data, result)
+            potential_attack_types = identify_potential_attack_types(cleaned_data, result)
             if potential_attack_types:
                 analysis['potential_attack_types'] = potential_attack_types
                 
@@ -172,6 +198,8 @@ def predict():
         
         return jsonify({'status': 'success', 'result': result})
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({'status': 'error', 'message': f'Error making prediction: {str(e)}'})
 
 def identify_potential_attack_types(data, result):
@@ -183,37 +211,50 @@ def identify_potential_attack_types(data, result):
     
     # Check for potential port scanning
     if 'port' in data and 'connection_count' in data:
-        if int(data.get('connection_count', 0)) > 10:
-            potential_attacks.append({
-                'type': 'Port Scanning',
-                'description': 'Multiple connection attempts detected which may indicate port scanning activity'
-            })
+        connection_count = data.get('connection_count')
+        if connection_count is not None and not pd.isna(connection_count):
+            try:
+                if int(float(connection_count)) > 10:
+                    potential_attacks.append({
+                        'type': 'Port Scanning',
+                        'description': 'Multiple connection attempts detected which may indicate port scanning activity'
+                    })
+            except (ValueError, TypeError):
+                pass
     
     # Check for potential DoS attack
     if 'bytes' in data and 'packets' in data:
-        try:
-            bytes_val = float(data.get('bytes', 0))
-            packets_val = float(data.get('packets', 0))
-            if bytes_val > 10000 and packets_val > 100:
-                potential_attacks.append({
-                    'type': 'Denial of Service',
-                    'description': 'High volume of traffic detected which may indicate a DoS attempt'
-                })
-        except (ValueError, TypeError):
-            pass
+        bytes_val = data.get('bytes')
+        packets_val = data.get('packets')
+        
+        if bytes_val is not None and packets_val is not None and not pd.isna(bytes_val) and not pd.isna(packets_val):
+            try:
+                bytes_val = float(bytes_val)
+                packets_val = float(packets_val)
+                if bytes_val > 10000 and packets_val > 100:
+                    potential_attacks.append({
+                        'type': 'Denial of Service',
+                        'description': 'High volume of traffic detected which may indicate a DoS attempt'
+                    })
+            except (ValueError, TypeError):
+                pass
     
     # Check for potential data exfiltration
     if 'bytes_out' in data and 'bytes_in' in data:
-        try:
-            bytes_out = float(data.get('bytes_out', 0))
-            bytes_in = float(data.get('bytes_in', 0))
-            if bytes_out > 5 * bytes_in and bytes_out > 1000:
-                potential_attacks.append({
-                    'type': 'Data Exfiltration',
-                    'description': 'Unusually high outbound data volume which may indicate data exfiltration'
-                })
-        except (ValueError, TypeError):
-            pass
+        bytes_out = data.get('bytes_out')
+        bytes_in = data.get('bytes_in')
+        
+        if bytes_out is not None and bytes_in is not None and not pd.isna(bytes_out) and not pd.isna(bytes_in):
+            try:
+                bytes_out = float(bytes_out)
+                bytes_in = float(bytes_in)
+                if bytes_out > 5 * bytes_in and bytes_out > 1000:
+                    potential_attacks.append({
+                        'type': 'Data Exfiltration',
+                        'description': 'Unusually high outbound data volume which may indicate data exfiltration'
+                    })
+            except (ValueError, TypeError):
+                pass
     
     return potential_attacks
 
@@ -255,69 +296,144 @@ def batch_predict():
         return jsonify({'status': 'error', 'message': 'No model loaded. Please load a model first.'})
     
     try:
-        # Check if file was uploaded
-        if 'file' not in request.files:
-            return jsonify({'status': 'error', 'message': 'No file uploaded'})
+        # Check if we're using the default test dataset
+        if request.content_type == 'application/json':
+            data = request.json
+            if data.get('use_default', False) and data.get('default_url'):
+                # Extract filename from URL
+                default_url = data.get('default_url')
+                filename = default_url.split('/')[-1]
+                
+                # Build path to the file
+                test_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'test'))
+                file_path = os.path.join(test_dir, filename)
+                
+                if not os.path.exists(file_path):
+                    return jsonify({'status': 'error', 'message': f'Default test file not found: {filename}'})
+                
+                # Load the CSV file
+                try:
+                    df = pd.read_csv(file_path)
+                except Exception as e:
+                    return jsonify({'status': 'error', 'message': f'Error reading default test file: {str(e)}'})
+            else:
+                return jsonify({'status': 'error', 'message': 'Invalid request format'})
+        else:
+            # Get uploaded file
+            if 'file' not in request.files:
+                return jsonify({'status': 'error', 'message': 'No file part'})
+                
+            file = request.files['file']
             
-        file = request.files['file']
-        if file.filename == '':
-            return jsonify({'status': 'error', 'message': 'No file selected'})
-            
-        # Read CSV file
-        df = pd.read_csv(file)
+            if file.filename == '':
+                return jsonify({'status': 'error', 'message': 'No selected file'})
+                
+            # Process the CSV file
+            try:
+                df = pd.read_csv(file)
+            except Exception as e:
+                return jsonify({'status': 'error', 'message': f'Error reading CSV file: {str(e)}'})
         
-        # Make predictions for each row
+        # Replace NaN values with None for JSON compatibility
+        df = df.replace({np.nan: None})
+        
+        # Make predictions on the dataframe
         results = []
-        for _, row in df.iterrows():
-            result = predict_log_instance(row.to_dict(), model_dict)
+        anomaly_count = 0
+        total_entries = len(df)
+        anomaly_confidence_sum = 0
+        
+        # Sample of anomalies to return
+        sample_anomalies = []
+        
+        # Process each row
+        for index, row in df.iterrows():
+            # Convert row to dictionary and handle NaN values
+            log_entry = row.to_dict()
+            
+            # Clean NaN values (convert to None for JSON)
+            for key, value in log_entry.items():
+                if pd.isna(value):
+                    log_entry[key] = None
+            
+            # Make prediction
+            result = predict_log_instance(log_entry, model_dict)
+            
+            # Add the source data to the result
+            result.update(log_entry)
+            
+            # Track anomalies
+            if result['prediction'] == 'Anomalous':
+                anomaly_count += 1
+                anomaly_confidence_sum += result['confidence']
+                
+                # Keep a sample of anomalies (up to 5)
+                if len(sample_anomalies) < 5:
+                    # Create a clean copy of log entry without NaN values
+                    clean_sample = {}
+                    for key, value in log_entry.items():
+                        if not pd.isna(value):
+                            clean_sample[key] = value
+                    
+                    clean_sample['confidence'] = result['confidence']
+                    clean_sample['prediction'] = 'Anomalous'
+                    sample_anomalies.append(clean_sample)
+            
             results.append(result)
         
-        # Count anomalies
-        anomaly_count = sum(1 for r in results if r['prediction'] == 'Anomalous')
-        total_entries = len(results)
+        # Calculate statistics
         anomaly_percentage = (anomaly_count / total_entries) * 100 if total_entries > 0 else 0
+        avg_confidence = anomaly_confidence_sum / anomaly_count if anomaly_count > 0 else 0
         
-        # Determine threat level based on percentage of anomalies
-        threat_level = "Low"
-        if anomaly_percentage >= 5 and anomaly_percentage < 15:
-            threat_level = "Medium"
-        elif anomaly_percentage >= 15 and anomaly_percentage < 30:
+        # Determine overall threat level
+        if anomaly_percentage >= 15:
             threat_level = "High"
-        elif anomaly_percentage >= 30:
-            threat_level = "Critical"
-            
-        # Analyze patterns in the anomalies
-        anomaly_results = [r for r in results if r['prediction'] == 'Anomalous']
-        pattern_analysis = {}
+        elif anomaly_percentage >= 5:
+            threat_level = "Medium"
+        else:
+            threat_level = "Low"
         
-        # Check confidence distribution
-        confidence_scores = [r['confidence'] for r in anomaly_results]
-        avg_confidence = sum(confidence_scores) / len(confidence_scores) if confidence_scores else 0
-        high_confidence_count = sum(1 for c in confidence_scores if c > 0.8)
-        
-        # Generate detailed conclusion text
+        # Generate conclusion text
         conclusion = generate_conclusion(anomaly_count, total_entries, threat_level, avg_confidence)
         
-        # Add recommendations based on threat level
+        # Generate recommendations
         recommendations = generate_recommendations(threat_level, anomaly_percentage)
         
-        return jsonify({
+        # Clean results for JSON serialization (limit to 100 entries for performance)
+        clean_results = []
+        for i, res in enumerate(results[:100]):
+            if i >= 100:
+                break
+                
+            # Clean record
+            clean_record = {}
+            for key, value in res.items():
+                if not pd.isna(value):
+                    clean_record[key] = value
+            
+            clean_results.append(clean_record)
+        
+        # Build response with limited results for efficiency
+        response = {
             'status': 'success',
-            'message': f'Processed {total_entries} log entries, found {anomaly_count} anomalies',
-            'results': results,
-            'summary': {
+            'result': {
                 'total_entries': total_entries,
                 'anomaly_count': anomaly_count,
                 'anomaly_percentage': anomaly_percentage,
+                'avg_confidence': float(avg_confidence),
                 'threat_level': threat_level,
-                'avg_confidence': avg_confidence,
-                'high_confidence_anomalies': high_confidence_count,
                 'conclusion': conclusion,
-                'recommendations': recommendations
+                'recommendations': recommendations,
+                'sample_anomalies': sample_anomalies,
+                'predictions': clean_results
             }
-        })
+        }
+        
+        return jsonify(response)
     except Exception as e:
-        return jsonify({'status': 'error', 'message': f'Error processing file: {str(e)}'})
+        import traceback
+        traceback.print_exc()
+        return jsonify({'status': 'error', 'message': f'Error during batch prediction: {str(e)}'})
 
 def generate_conclusion(anomaly_count, total_entries, threat_level, avg_confidence):
     """Generate a detailed conclusion based on analysis results."""
