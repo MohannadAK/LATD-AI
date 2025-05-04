@@ -796,4 +796,3 @@ def train_model(train_filepath, test_filepath=None):
         print(f"\n❌ An error occurred during training: {e}")
         logging.error(f"An error occurred during training: {e}")
         return None
-
